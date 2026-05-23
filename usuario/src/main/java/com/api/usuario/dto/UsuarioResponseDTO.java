@@ -30,12 +30,12 @@ public class UsuarioResponseDTO {
         dto.setA_materno(usuario.getA_materno());
         dto.setEmail(usuario.getEmail());
 
-        if (usuario.getDireccion_usuario() != null) {
+        if (usuario.getId_direccion_usuario() != null) {
             DireccionDTO direDto = new DireccionDTO();
-            direDto.setCalle(usuario.getDireccion_usuario().getCalle());
-            direDto.setNum_calle(usuario.getDireccion_usuario().getNum_calle());
-            direDto.setComuna(usuario.getDireccion_usuario().getComuna());
-            direDto.setRegion(usuario.getDireccion_usuario().getRegion());
+            direDto.setCalle(usuario.getId_direccion_usuario().getCalle());
+            direDto.setNum_calle(usuario.getId_direccion_usuario().getNum_calle());
+            direDto.setComuna(usuario.getId_direccion_usuario().getComuna());
+            direDto.setRegion(usuario.getId_direccion_usuario().getRegion());
             dto.setDireccion(direDto);
         }
         return dto;

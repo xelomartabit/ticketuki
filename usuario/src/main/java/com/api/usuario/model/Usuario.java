@@ -36,7 +36,7 @@ public class Usuario {
     @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "Direccion_id_direccion", nullable = false)
-    private Direccion direccion_usuario;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_direccion_usuario", nullable = false)
+    private DireccionUsuario id_direccion_usuario;
 }
