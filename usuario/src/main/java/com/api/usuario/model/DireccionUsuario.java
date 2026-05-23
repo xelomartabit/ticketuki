@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="Direccion")
+@Table(name="DireccionUsuario")
 
-public class Direccion {
+public class DireccionUsuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_direccion")
-    private Integer id_direccion;
+    @Column(name = "id_direccion_usuario")
+    private Integer id_direccion_usuario;
 
     @Column(name = "calle", nullable = false, length = 100)
     private String calle;

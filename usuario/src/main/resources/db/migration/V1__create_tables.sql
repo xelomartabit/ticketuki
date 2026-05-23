@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS direccion (
-    id_direccion INT PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS direccionUsuario (
+    id_direccion_usuario INT PRIMARY KEY AUTO_INCREMENT,
     calle VARCHAR(100) NOT NULL,
     num_calle INT NOT NULL,
     comuna VARCHAR(50) NOT NULL,
@@ -14,6 +14,6 @@ CREATE TABLE IF NOT EXISTS usuario (
     a_paterno VARCHAR(25) NOT NULL,
     a_materno VARCHAR(25) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
-    direccion_id_direccion INT NOT NULL,
-    FOREIGN KEY (direccion_id_direccion) REFERENCES direccion(id_direccion) ON DELETE CASCADE
+    id_direccion_usuario INT NOT NULL,
+    FOREIGN KEY (id_direccion_usuario) REFERENCES direccionUsuario(id_direccion_usuario) ON DELETE CASCADE
 );

@@ -12,6 +12,4 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario,Integer> {
 
     Optional<Usuario> findByRun(String run);
-
-    boolean existsByRun(String run);
 }
