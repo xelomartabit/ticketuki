@@ -1,0 +1,7 @@
+com/ticketuki/promocionservice/config/WebClientConfig.class
+com/ticketuki/promocionservice/controller/PromocionController.class
+com/ticketuki/promocionservice/dto/PromocionDTO.class
+com/ticketuki/promocionservice/model/Promocion.class
+com/ticketuki/promocionservice/service/PromocionService.class
+com/ticketuki/promocionservice/PromocionServiceApplication.class
+com/ticketuki/promocionservice/repository/PromocionRepository.class
