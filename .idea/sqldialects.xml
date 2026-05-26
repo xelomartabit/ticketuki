@@ -5,5 +5,7 @@
     <file url="file://$PROJECT_DIR$/artista-service/target/classes/db/migration/V1__create_artista_service.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/evento-service/src/main/resources/db/migration/V1__create_evento_service.sql" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/evento-service/target/classes/db/migration/V1__create_evento_service.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/ticket-service/src/main/resources/db/migration/V1__create_ticket_service.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/ticket-service/target/classes/db/migration/V1__create_ticket_service.sql" dialect="GenericSQL" />
   </component>
 </project>
