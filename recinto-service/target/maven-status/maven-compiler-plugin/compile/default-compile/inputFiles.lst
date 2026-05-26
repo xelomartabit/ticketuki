@@ -1,0 +1,14 @@
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/RecintoServiceApplication.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/config/WebClientConfig.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/controller/RecintoController.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/controller/SectorController.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/dto/DireccionRecintoDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/dto/RecintoDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/dto/SectorDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/model/DireccionRecinto.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/model/Recinto.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/model/Sector.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/repository/RecintoRepository.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/repository/SectorRepository.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/service/RecintoService.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/recinto-service/src/main/java/com/ticketuki/recintoservice/service/SectorService.java
