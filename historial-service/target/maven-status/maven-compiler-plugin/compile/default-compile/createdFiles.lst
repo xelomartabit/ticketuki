@@ -1,0 +1,7 @@
+com/ticketuki/historialservice/service/HistorialService.class
+com/ticketuki/historialservice/repository/HistorialRepository.class
+com/ticketuki/historialservice/model/Historial.class
+com/ticketuki/historialservice/config/WebClientConfig.class
+com/ticketuki/historialservice/controller/HistorialController.class
+com/ticketuki/historialservice/dto/HistorialDTO.class
+com/ticketuki/historialservice/HistorialServiceApplication.class
