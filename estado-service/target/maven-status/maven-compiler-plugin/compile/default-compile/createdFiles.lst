@@ -1,0 +1,7 @@
+com/ticketuki/estadoservice/repository/EstadoRepository.class
+com/ticketuki/estadoservice/controller/EstadoController.class
+com/ticketuki/estadoservice/config/WebClientConfig.class
+com/ticketuki/estadoservice/dto/EstadoDTO.class
+com/ticketuki/estadoservice/service/EstadoService.class
+com/ticketuki/estadoservice/model/Estado.class
+com/ticketuki/estadoservice/EstadoServiceApplication.class
