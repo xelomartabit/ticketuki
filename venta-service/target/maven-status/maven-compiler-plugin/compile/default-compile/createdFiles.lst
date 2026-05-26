@@ -1,0 +1,9 @@
+com/ticketuki/ventaservice/controller/VentaController.class
+com/ticketuki/ventaservice/repository/VentaRepository.class
+com/ticketuki/ventaservice/model/Venta.class
+com/ticketuki/ventaservice/VentaServiceApplication.class
+com/ticketuki/ventaservice/model/DetalleVenta.class
+com/ticketuki/ventaservice/config/WebClientConfig.class
+com/ticketuki/ventaservice/dto/DetalleVentaDTO.class
+com/ticketuki/ventaservice/service/VentaService.class
+com/ticketuki/ventaservice/dto/VentaDTO.class

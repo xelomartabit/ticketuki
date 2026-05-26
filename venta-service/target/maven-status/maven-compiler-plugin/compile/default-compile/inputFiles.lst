@@ -1,0 +1,9 @@
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/VentaServiceApplication.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/config/WebClientConfig.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/controller/VentaController.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/dto/DetalleVentaDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/dto/VentaDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/model/DetalleVenta.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/model/Venta.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/repository/VentaRepository.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/venta-service/src/main/java/com/ticketuki/ventaservice/service/VentaService.java
