@@ -1,0 +1,11 @@
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/UsuarioServiceApplication.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/config/WebClientConfig.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/controller/UsuarioController.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/dto/DireccionDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/dto/UsuarioRequestDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/dto/UsuarioResponseDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/model/DireccionUsuario.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/model/Usuario.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/repository/DireccionUsuarioRepository.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/repository/UsuarioRepository.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/usuario-service/src/main/java/com/ticketuki/usuarioservice/service/UsuarioService.java

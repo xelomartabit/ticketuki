@@ -1,0 +1,11 @@
+com/ticketuki/usuarioservice/repository/DireccionUsuarioRepository.class
+com/ticketuki/usuarioservice/config/WebClientConfig.class
+com/ticketuki/usuarioservice/dto/UsuarioResponseDTO.class
+com/ticketuki/usuarioservice/controller/UsuarioController.class
+com/ticketuki/usuarioservice/dto/UsuarioRequestDTO.class
+com/ticketuki/usuarioservice/repository/UsuarioRepository.class
+com/ticketuki/usuarioservice/model/Usuario.class
+com/ticketuki/usuarioservice/service/UsuarioService.class
+com/ticketuki/usuarioservice/UsuarioServiceApplication.class
+com/ticketuki/usuarioservice/dto/DireccionDTO.class
+com/ticketuki/usuarioservice/model/DireccionUsuario.class
