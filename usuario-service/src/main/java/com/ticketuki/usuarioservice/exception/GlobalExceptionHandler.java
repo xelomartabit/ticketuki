@@ -18,9 +18,10 @@ import java.util.Map;
 
 public class GlobalExceptionHandler {
 
+    //no se encuentra usuario por id en la bd
     @ExceptionHandler(UsuarioNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsuarioNotFound(UsuarioNotFoundException ex, HttpServletRequest request) {
-        log.warn("UsuarioNotFoundException: {}", ex.getMessage());
+        log.warn("Usuario no encontrado: {}", ex.getMessage());
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.NOT_FOUND.value())
@@ -30,10 +31,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-
+    //intento crear un usuario con run que ya existe
     @ExceptionHandler(UsuarioDuplicadoException.class)
     public ResponseEntity<ErrorResponse> handleUsuarioDuplicado(UsuarioDuplicadoException ex, HttpServletRequest request) {
-        log.warn("UsuarioDuplicadoException: {}", ex.getMessage());
+        log.warn("Usuario duplicado: {}", ex.getMessage());
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.CONFLICT.value())
@@ -43,29 +44,31 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
+    //errores de validacion del request @Valid en el dto
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex,HttpServletRequest request) {
-        log.warn("Validation error: {}", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        log.warn("Error de validación: {}", ex.getMessage());
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
+            errors.put(fieldName, error.getDefaultMessage());
         });
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("message", "Validación fallida");
-        response.put("errors", errors);
-        response.put("path", request.getRequestURI());
+        ErrorResponse response = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validación fallida")
+                .path(request.getRequestURI())
+                .errors(errors)
+                .build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    //cualquier excepción no controlada para evitar exponer al servidor
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex, HttpServletRequest request) {
-        log.error("Error no manejado: ", ex);
+        log.error("Error interno no manejado: ", ex);
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())

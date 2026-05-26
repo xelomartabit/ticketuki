@@ -16,7 +16,7 @@ public class DireccionUsuario {
     @Column(name = "id_direccion_usuario")
     private Long id_direccion_usuario;
 
-    @Column(name = "calle", nullable = false, length = 100)
+    @Column(name = "calle", nullable = false, length = 50)
     private String calle;
 
     @Column(name = "region", nullable = false, length = 50)

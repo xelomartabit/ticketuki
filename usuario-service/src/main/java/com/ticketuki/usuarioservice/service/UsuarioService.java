@@ -5,6 +5,7 @@ import com.ticketuki.usuarioservice.dto.UsuarioRequestDTO;
 import com.ticketuki.usuarioservice.dto.UsuarioResponseDTO;
 import com.ticketuki.usuarioservice.exception.UsuarioDuplicadoException;
 import com.ticketuki.usuarioservice.exception.UsuarioNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import com.ticketuki.usuarioservice.model.DireccionUsuario;
 import com.ticketuki.usuarioservice.model.Usuario;
 import com.ticketuki.usuarioservice.repository.DireccionUsuarioRepository;
@@ -12,6 +13,7 @@ import com.ticketuki.usuarioservice.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final DireccionUsuarioRepository direccionRepository;
 
-    private UsuarioResponseDTO mapToResponse(Usuario usuario) {
+    private UsuarioResponseDTO toResponseDTO(Usuario usuario) {
         DireccionDTO direccionDTO = null;
         if (usuario.getDireccion() != null) {
             direccionDTO = new DireccionDTO(
@@ -45,43 +47,35 @@ public class UsuarioService {
     }
 
     public List<UsuarioResponseDTO> listarUsuarios() {
-        log.info("Obteniendo todos los usuarios");
+        log.info("Mostrando todos los usuarios");
         return usuarioRepository.findAll()
             .stream()
-            .map(this::mapToResponse)
+            .map(this::toResponseDTO)
             .collect(Collectors.toList());
     }
 
     public UsuarioResponseDTO obtenerUsuarioPorId(Long id) {
-        log.info("Obteniendo usuario por id: {}", id);
+        log.info("Buscando usuario por id: {}", id);
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Usuario no encontrado con ID: {}", id);
                     return new UsuarioNotFoundException("Usuario no encontrado con ID: " + id);
                 });
-        return mapToResponse(usuario);
+        return toResponseDTO(usuario);
     }
 
+    @Transactional
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioDTO) {
         log.info("Creando nuevo usuario con run: {}", usuarioDTO.getRun());
 
-        boolean existe = usuarioRepository.findByRun(usuarioDTO.getRun()).isPresent();
-        if (existe) {
-            log.warn("Intento de crear usuario con RUN duplicado: {}", usuarioDTO.getRun());
-            throw new UsuarioDuplicadoException("RUN ya existe en el sistema");
-        }
-
-        DireccionUsuario direccion = null;
-        if (usuarioDTO.getDireccion() != null) {
-            direccion = new DireccionUsuario(
-                null,
-                usuarioDTO.getDireccion().getCalle(),
-                usuarioDTO.getDireccion().getRegion(),
-                usuarioDTO.getDireccion().getComuna(),
-                usuarioDTO.getDireccion().getNum_calle()
-            );
-            direccion = direccionRepository.save(direccion);
-        }
+        DireccionUsuario direccion = new DireccionUsuario(
+            null,
+            usuarioDTO.getDireccion().getCalle(),
+            usuarioDTO.getDireccion().getRegion(),
+            usuarioDTO.getDireccion().getComuna(),
+            usuarioDTO.getDireccion().getNum_calle()
+        );
+        direccion = direccionRepository.save(direccion);
 
         Usuario usuario = new Usuario(
             null,
@@ -94,12 +88,19 @@ public class UsuarioService {
             direccion
         );
 
-        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        Usuario usuarioGuardado;
+        try {
+            usuarioGuardado = usuarioRepository.save(usuario);
+        } catch (DataIntegrityViolationException e) {
+            log.warn("Intento creacion usuario con run duplicado: {}", usuarioDTO.getRun());
+            throw new UsuarioDuplicadoException("Run ya existe!");
+        }
         log.info("Usuario creado exitosamente con ID: {}", usuarioGuardado.getId_usuario());
 
-        return mapToResponse(usuarioGuardado);
+        return toResponseDTO(usuarioGuardado);
     }
 
+    @Transactional
     public UsuarioResponseDTO actualizarUsuario(Long id, UsuarioRequestDTO usuarioDTO) {
         log.info("Actualizando usuario con id: {}", id);
         Usuario usuario = usuarioRepository.findById(id)
@@ -124,7 +125,7 @@ public class UsuarioService {
 
         Usuario usuarioActualizado = usuarioRepository.save(usuario);
         log.info("Usuario actualizado exitosamente: {}", id);
-        return mapToResponse(usuarioActualizado);
+        return toResponseDTO(usuarioActualizado);
     }
 
     public void eliminarUsuario(Long id) {
@@ -132,7 +133,7 @@ public class UsuarioService {
 
         if (!usuarioRepository.existsById(id)) {
             log.warn("Usuario no encontrado para eliminar: {}", id);
-            throw new UsuarioNotFoundException("Usuario no encontrado");
+            throw new UsuarioNotFoundException("Usuario no encontrado!");
         }
 
         usuarioRepository.deleteById(id);
