@@ -1,0 +1,7 @@
+com/ticketuki/pagoservice/service/PagoService.class
+com/ticketuki/pagoservice/repository/PagoRepository.class
+com/ticketuki/pagoservice/PagoServiceApplication.class
+com/ticketuki/pagoservice/config/WebClientConfig.class
+com/ticketuki/pagoservice/model/Pago.class
+com/ticketuki/pagoservice/dto/PagoDTO.class
+com/ticketuki/pagoservice/controller/PagoController.class
