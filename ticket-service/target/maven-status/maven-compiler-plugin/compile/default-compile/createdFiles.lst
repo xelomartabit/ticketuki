@@ -1,0 +1,8 @@
+com/ticketuki/ticketservice/repository/TicketRepository.class
+com/ticketuki/ticketservice/config/WebClientConfig.class
+com/ticketuki/ticketservice/TicketServiceApplication.class
+com/ticketuki/ticketservice/service/TicketService.class
+com/ticketuki/ticketservice/model/Ticket.class
+com/ticketuki/ticketservice/dto/TicketDTO.class
+com/ticketuki/ticketservice/util/QRGenerator.class
+com/ticketuki/ticketservice/controller/TicketController.class

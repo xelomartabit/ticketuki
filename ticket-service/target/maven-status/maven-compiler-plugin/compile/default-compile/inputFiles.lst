@@ -1,0 +1,8 @@
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/TicketServiceApplication.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/config/WebClientConfig.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/controller/TicketController.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/dto/TicketDTO.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/model/Ticket.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/repository/TicketRepository.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/service/TicketService.java
+/Users/pgonzalez/Desktop/DUOCUC/SEMESTRE 3/FULLSTACK_1/before/NUEVO/nuevo_ticketuki/ticket-service/src/main/java/com/ticketuki/ticketservice/util/QRGenerator.java
