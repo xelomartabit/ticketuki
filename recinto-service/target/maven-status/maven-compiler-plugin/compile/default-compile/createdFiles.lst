@@ -1,0 +1,14 @@
+com/ticketuki/recintoservice/service/SectorService.class
+com/ticketuki/recintoservice/dto/SectorDTO.class
+com/ticketuki/recintoservice/repository/SectorRepository.class
+com/ticketuki/recintoservice/controller/SectorController.class
+com/ticketuki/recintoservice/repository/RecintoRepository.class
+com/ticketuki/recintoservice/dto/RecintoDTO.class
+com/ticketuki/recintoservice/config/WebClientConfig.class
+com/ticketuki/recintoservice/controller/RecintoController.class
+com/ticketuki/recintoservice/dto/DireccionRecintoDTO.class
+com/ticketuki/recintoservice/model/DireccionRecinto.class
+com/ticketuki/recintoservice/RecintoServiceApplication.class
+com/ticketuki/recintoservice/service/RecintoService.class
+com/ticketuki/recintoservice/model/Sector.class
+com/ticketuki/recintoservice/model/Recinto.class
