@@ -4,12 +4,15 @@ import com.ticketuki.estadoservice.dto.EstadoDTO;
 import com.ticketuki.estadoservice.service.EstadoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class EstadoController {
 
     private final EstadoService estadoService;
@@ -29,7 +32,7 @@ public class EstadoController {
 
     @PostMapping("/estadosEvento")
     public ResponseEntity<EstadoDTO> crearEstadoEvento(@Valid @RequestBody EstadoDTO dto) {
-        return ResponseEntity.status(201).body(estadoService.crearEstadoEvento(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(estadoService.crearEstadoEvento(dto));
     }
 
     // EstadoVenta
@@ -47,7 +50,7 @@ public class EstadoController {
 
     @PostMapping("/estadosVenta")
     public ResponseEntity<EstadoDTO> crearEstadoVenta(@Valid @RequestBody EstadoDTO dto) {
-        return ResponseEntity.status(201).body(estadoService.crearEstadoVenta(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(estadoService.crearEstadoVenta(dto));
     }
 
     // EstadoTicket
@@ -65,7 +68,7 @@ public class EstadoController {
 
     @PostMapping("/estadosTicket")
     public ResponseEntity<EstadoDTO> crearEstadoTicket(@Valid @RequestBody EstadoDTO dto) {
-        return ResponseEntity.status(201).body(estadoService.crearEstadoTicket(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(estadoService.crearEstadoTicket(dto));
     }
 
     // Todos los estados (resumen)

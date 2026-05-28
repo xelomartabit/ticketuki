@@ -5,6 +5,7 @@ import com.ticketuki.ventaservice.dto.VentaDTO;
 import com.ticketuki.ventaservice.model.DetalleVenta;
 import com.ticketuki.ventaservice.model.Venta;
 import com.ticketuki.ventaservice.repository.DetalleVentaRepository;
+import com.ticketuki.ventaservice.exception.VentaNotFoundException;
 import com.ticketuki.ventaservice.repository.VentaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class VentaService {
     private final VentaRepository ventaRepository;
     private final DetalleVentaRepository detalleVentaRepository;
 
-    private VentaDTO mapToDTO(Venta v) {
+    private VentaDTO toResponseDTO(Venta v) {
         return new VentaDTO(v.getId_venta(), v.getFecha_venta(), v.getMedio_pago(), v.getCod_autorizacion(), v.getEstado_venta_id_estado());
     }
 
@@ -35,30 +36,30 @@ public class VentaService {
     public VentaDTO crearVenta(VentaDTO dto) {
         log.info("Creando venta");
         Venta venta = new Venta(null, LocalDate.now(), dto.getMedio_pago(), dto.getCod_autorizacion(), dto.getEstado_venta_id_estado());
-        return mapToDTO(ventaRepository.save(venta));
+        return toResponseDTO(ventaRepository.save(venta));
     }
 
     @Transactional
     public VentaDTO cambiarEstado(Long id, Long idEstado) {
         Venta venta = ventaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Venta no encontrada: " + id));
+                .orElseThrow(() -> new VentaNotFoundException("Venta no encontrada: " + id));
         venta.setEstado_venta_id_estado(idEstado);
-        return mapToDTO(ventaRepository.save(venta));
+        return toResponseDTO(ventaRepository.save(venta));
     }
 
     @Transactional(readOnly = true)
     public Optional<VentaDTO> obtenerVenta(Long id) {
-        return ventaRepository.findById(id).map(this::mapToDTO);
+        return ventaRepository.findById(id).map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public List<VentaDTO> listarVentas() {
-        return ventaRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
+        return ventaRepository.findAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<VentaDTO> listarPorPeriodo(LocalDate inicio, LocalDate fin) {
-        return ventaRepository.findByFecha_ventaBetween(inicio, fin).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return ventaRepository.findByFecha_ventaBetween(inicio, fin).stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Transactional

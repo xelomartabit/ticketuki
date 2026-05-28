@@ -4,6 +4,8 @@ import com.ticketuki.eventoservice.dto.EventoDTO;
 import com.ticketuki.eventoservice.service.EventoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/eventos")
 @RequiredArgsConstructor
+@Slf4j
 public class EventoController {
     private final EventoService eventoService;
 
@@ -29,7 +32,7 @@ public class EventoController {
 
     @PostMapping
     public ResponseEntity<EventoDTO> crear(@Valid @RequestBody EventoDTO eventoDTO) {
-        return ResponseEntity.status(201).body(eventoService.crear(eventoDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.crear(eventoDTO));
     }
 
     @PutMapping("/{id}")

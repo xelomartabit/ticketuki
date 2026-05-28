@@ -6,6 +6,7 @@ import com.ticketuki.usuarioservice.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -32,7 +33,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> crearUsuario(@Valid @RequestBody UsuarioRequestDTO usuarioDTO) {
         log.info("POST /api/usuarios - Creando nuevo usuario");
-        return ResponseEntity.status(201).body(usuarioService.crearUsuario(usuarioDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.crearUsuario(usuarioDTO));
     }
 
     @PutMapping("/{id}")

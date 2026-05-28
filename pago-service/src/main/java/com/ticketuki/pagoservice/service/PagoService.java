@@ -19,7 +19,7 @@ public class PagoService {
 
     private final PagoRepository pagoRepository;
 
-    private PagoDTO mapToDTO(Pago p) {
+    private PagoDTO toResponseDTO(Pago p) {
         return new PagoDTO(p.getId_pago(), p.getMonto(), p.getMedio_pago(), p.getCod_autorizacion(),
                 p.getTimestamp(), p.getEstado(), p.getVenta_id(), p.getUsuario_id());
     }
@@ -29,39 +29,39 @@ public class PagoService {
         log.info("Procesando pago para venta: {}", dto.getVenta_id());
         Pago p = new Pago(null, dto.getMonto(), dto.getMedio_pago(), dto.getCod_autorizacion(),
                 LocalDate.now(), "Pendiente", dto.getVenta_id(), dto.getUsuario_id());
-        return mapToDTO(pagoRepository.save(p));
+        return toResponseDTO(pagoRepository.save(p));
     }
 
     @Transactional(readOnly = true)
     public Optional<PagoDTO> obtenerPago(Long id) {
-        return pagoRepository.findById(id).map(this::mapToDTO);
+        return pagoRepository.findById(id).map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public List<PagoDTO> listarPorVenta(Long idVenta) {
-        return pagoRepository.findByVenta_id(idVenta).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return pagoRepository.findByVenta_id(idVenta).stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Transactional
     public Optional<PagoDTO> procesarReembolso(Long id) {
         return pagoRepository.findById(id).map(p -> {
             p.setEstado("Reembolsado");
-            return mapToDTO(pagoRepository.save(p));
+            return toResponseDTO(pagoRepository.save(p));
         });
     }
 
     @Transactional(readOnly = true)
     public List<PagoDTO> listarPorUsuario(Long idUsuario) {
-        return pagoRepository.findByUsuario_id(idUsuario).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return pagoRepository.findByUsuario_id(idUsuario).stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<PagoDTO> listarPorEstado(String estado) {
-        return pagoRepository.findByEstado(estado).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return pagoRepository.findByEstado(estado).stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<PagoDTO> listarPorPeriodo(LocalDate inicio, LocalDate fin) {
-        return pagoRepository.findByTimestampBetween(inicio, fin).stream().map(this::mapToDTO).collect(Collectors.toList());
+        return pagoRepository.findByTimestampBetween(inicio, fin).stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 }

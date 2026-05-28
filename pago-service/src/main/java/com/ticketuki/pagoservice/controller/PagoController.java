@@ -4,7 +4,9 @@ import com.ticketuki.pagoservice.dto.PagoDTO;
 import com.ticketuki.pagoservice.service.PagoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
@@ -13,13 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/pagos")
 @RequiredArgsConstructor
+@Slf4j
 public class PagoController {
 
     private final PagoService pagoService;
 
     @PostMapping
     public ResponseEntity<PagoDTO> procesarPago(@Valid @RequestBody PagoDTO dto) {
-        return ResponseEntity.status(201).body(pagoService.procesarPago(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(pagoService.procesarPago(dto));
     }
 
     @GetMapping("/{id}")

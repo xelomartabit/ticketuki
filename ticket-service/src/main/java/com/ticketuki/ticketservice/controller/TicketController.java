@@ -4,6 +4,8 @@ import com.ticketuki.ticketservice.dto.TicketDTO;
 import com.ticketuki.ticketservice.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tickets")
 @RequiredArgsConstructor
+@Slf4j
 public class TicketController {
 
     private final TicketService ticketService;
@@ -22,7 +25,7 @@ public class TicketController {
 
     @PostMapping
     public ResponseEntity<TicketDTO> crearTicket(@Valid @RequestBody TicketDTO dto) {
-        return ResponseEntity.status(201).body(ticketService.crearTicket(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.crearTicket(dto));
     }
 
     @GetMapping("/{id}")

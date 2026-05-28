@@ -5,6 +5,7 @@ import com.ticketuki.artistaservice.service.ArtistaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ArtistaController {
 
     @PostMapping
     public ResponseEntity<ArtistaDTO> crearArtista(@Valid @RequestBody ArtistaDTO dto) {
-        return ResponseEntity.status(201).body(artistaService.crearArtista(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(artistaService.crearArtista(dto));
     }
 
     @GetMapping("/{id}")
@@ -51,7 +52,7 @@ public class ArtistaController {
     @PostMapping("/{id}/evento/{idEvento}")
     public ResponseEntity<Void> asociarEvento(@PathVariable Long id, @PathVariable Long idEvento) {
         artistaService.asociarArtistaEvento(id, idEvento);
-        return ResponseEntity.status(201).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{id}/evento/{idEvento}")

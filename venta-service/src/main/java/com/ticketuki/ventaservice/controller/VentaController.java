@@ -5,7 +5,9 @@ import com.ticketuki.ventaservice.dto.VentaDTO;
 import com.ticketuki.ventaservice.service.VentaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class VentaController {
 
     private final VentaService ventaService;
@@ -24,7 +27,7 @@ public class VentaController {
 
     @PostMapping("/ventas")
     public ResponseEntity<VentaDTO> crearVenta(@Valid @RequestBody VentaDTO dto) {
-        return ResponseEntity.status(201).body(ventaService.crearVenta(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ventaService.crearVenta(dto));
     }
 
     @GetMapping("/ventas/{id}")
@@ -48,7 +51,7 @@ public class VentaController {
 
     @PostMapping("/detalleVenta")
     public ResponseEntity<DetalleVentaDTO> crearDetalle(@Valid @RequestBody DetalleVentaDTO dto) {
-        return ResponseEntity.status(201).body(ventaService.crearDetalle(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ventaService.crearDetalle(dto));
     }
 
     @GetMapping("/detalleVenta/{id}")

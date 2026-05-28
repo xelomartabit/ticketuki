@@ -4,6 +4,8 @@ import com.ticketuki.promocionservice.dto.PromocionDTO;
 import com.ticketuki.promocionservice.service.PromocionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/promociones")
 @RequiredArgsConstructor
+@Slf4j
 public class PromocionController {
 
     private final PromocionService promocionService;
@@ -22,7 +25,7 @@ public class PromocionController {
 
     @PostMapping
     public ResponseEntity<PromocionDTO> crearPromocion(@Valid @RequestBody PromocionDTO dto) {
-        return ResponseEntity.status(201).body(promocionService.crearPromocion(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(promocionService.crearPromocion(dto));
     }
 
     @GetMapping("/{id}")
