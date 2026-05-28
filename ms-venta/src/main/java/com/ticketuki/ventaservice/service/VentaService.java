@@ -25,17 +25,36 @@ public class VentaService {
     private final DetalleVentaRepository detalleVentaRepository;
 
     private VentaDTO toResponseDTO(Venta v) {
-        return new VentaDTO(v.getId_venta(), v.getFecha_venta(), v.getMedio_pago(), v.getCod_autorizacion(), v.getEstado_venta_id_estado());
+        return new VentaDTO(
+                v.getId_venta(),
+                v.getFecha_venta(),
+                v.getMedio_pago(),
+                v.getCod_autorizacion(),
+                v.getEstado_venta_id_estado());
     }
 
     private DetalleVentaDTO mapDetalleToDTO(DetalleVenta d) {
-        return new DetalleVentaDTO(d.getId_detalle(), d.getCantidad_ticket(), d.getPrecio_neto(), d.getPrecio_iva(), d.getPrecio_total(), d.getComision(), d.getUsuario_id_usuario(), d.getVenta_id_venta(), d.getSector_id_sector());
+        return new DetalleVentaDTO(
+                d.getId_detalle(),
+                d.getCantidad_ticket(),
+                d.getPrecio_neto(),
+                d.getPrecio_iva(),
+                d.getPrecio_total(),
+                d.getComision(),
+                d.getUsuario_id_usuario(),
+                d.getVenta_id_venta(),
+                d.getSector_id_sector());
     }
 
     @Transactional
     public VentaDTO crearVenta(VentaDTO dto) {
         log.info("Creando venta");
-        Venta venta = new Venta(null, LocalDate.now(), dto.getMedio_pago(), dto.getCod_autorizacion(), dto.getEstado_venta_id_estado());
+        Venta venta = new Venta(
+                null,
+                LocalDate.now(),
+                dto.getMedio_pago(),
+                dto.getCod_autorizacion(),
+                dto.getEstado_venta_id_estado());
         return toResponseDTO(ventaRepository.save(venta));
     }
 
@@ -49,32 +68,52 @@ public class VentaService {
 
     @Transactional(readOnly = true)
     public Optional<VentaDTO> obtenerVenta(Long id) {
-        return ventaRepository.findById(id).map(this::toResponseDTO);
+        return ventaRepository.findById(id)
+                .map(this::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public List<VentaDTO> listarVentas() {
-        return ventaRepository.findAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return ventaRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<VentaDTO> listarPorPeriodo(LocalDate inicio, LocalDate fin) {
-        return ventaRepository.findByFecha_ventaBetween(inicio, fin).stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return ventaRepository.findByFecha_ventaBetween(inicio, fin)
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     @Transactional
     public DetalleVentaDTO crearDetalle(DetalleVentaDTO dto) {
-        DetalleVenta detalle = new DetalleVenta(null, dto.getCantidad_ticket(), dto.getPrecio_neto(), dto.getPrecio_iva(), dto.getPrecio_total(), dto.getComision(), dto.getUsuario_id_usuario(), dto.getVenta_id_venta(), dto.getSector_id_sector());
+        DetalleVenta detalle = new DetalleVenta(
+                null,
+                dto.getCantidad_ticket(),
+                dto.getPrecio_neto(),
+                dto.getPrecio_iva(),
+                dto.getPrecio_total(),
+                dto.getComision(),
+                dto.getUsuario_id_usuario(),
+                dto.getVenta_id_venta(),
+                dto.getSector_id_sector());
         return mapDetalleToDTO(detalleVentaRepository.save(detalle));
     }
 
     @Transactional(readOnly = true)
     public Optional<DetalleVentaDTO> obtenerDetalle(Long id) {
-        return detalleVentaRepository.findById(id).map(this::mapDetalleToDTO);
+        return detalleVentaRepository.findById(id)
+                .map(this::mapDetalleToDTO);
     }
 
     @Transactional(readOnly = true)
     public List<DetalleVentaDTO> listarDetallesPorVenta(Long ventaId) {
-        return detalleVentaRepository.findByVenta_id_venta(ventaId).stream().map(this::mapDetalleToDTO).collect(Collectors.toList());
+        return detalleVentaRepository.findByVenta_id_venta(ventaId)
+                .stream()
+                .map(this::mapDetalleToDTO)
+                .toList();
     }
 }

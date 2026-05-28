@@ -14,6 +14,7 @@ public class VentaDTO {
 
     private Long id_venta;
 
+    @NotNull(message = "La fecha de venta es requerida")
     private LocalDate fecha_venta;
 
     @NotBlank(message = "El medio de pago es requerido")
@@ -22,5 +23,6 @@ public class VentaDTO {
     @NotNull(message = "El código de autorización es requerido")
     private Integer cod_autorizacion;
 
+    @NotNull(message = "El estado de venta es requerido")
     private Long estado_venta_id_estado;
 }

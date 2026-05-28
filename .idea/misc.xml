@@ -11,10 +11,20 @@
         <option value="$PROJECT_DIR$/artista-service/pom.xml" />
         <option value="$PROJECT_DIR$/ticket-service/pom.xml" />
         <option value="$PROJECT_DIR$/estado-service/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-venta/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-usuario/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-ticket/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-recinto/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-promocion/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-pago/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-historial/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-evento/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-estado/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-artista/pom.xml" />
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_24" default="true" project-jdk-name="24" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="ms-21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

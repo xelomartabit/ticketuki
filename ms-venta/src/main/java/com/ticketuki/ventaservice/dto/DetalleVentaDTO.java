@@ -27,9 +27,12 @@ public class DetalleVentaDTO {
     @NotNull(message = "La comisión es requerida")
     private Integer comision;
 
+    @NotNull(message = "El id usuario es requerido")
     private Long usuario_id_usuario;
 
+    @NotNull(message = "La id venta es requerida")
     private Long venta_id_venta;
 
+    @NotNull(message = "El id sector es requerida")
     private Long sector_id_sector;
 }

@@ -38,12 +38,15 @@ public class DetalleVenta {
     @Column(name = "comision", nullable = false)
     private Integer comision;
 
-    @Column(name = "usuario_id_usuario")
+    @NotNull
+    @Column(name = "usuario_id_usuario", nullable = false)
     private Long usuario_id_usuario;
 
-    @Column(name = "venta_id_venta")
+    @NotNull
+    @Column(name = "venta_id_venta", nullable = false)
     private Long venta_id_venta;
 
-    @Column(name = "sector_id_sector")
+    @NotNull
+    @Column(name = "sector_id_sector", nullable = false)
     private Long sector_id_sector;
 }

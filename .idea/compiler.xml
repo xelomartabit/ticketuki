@@ -7,7 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="usuario-service" />
+        <module name="ms-usuario" />
       </profile>
       <profile name="Annotation profile for Module Service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -16,15 +16,24 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
         </processorPath>
-        <module name="evento-service" />
-        <module name="estado-service" />
-        <module name="artista-service" />
-        <module name="recinto-service" />
-        <module name="ticket-service" />
+        <module name="ms-venta" />
+        <module name="ms-promocion" />
+        <module name="ms-pago" />
+        <module name="ms-artista" />
+        <module name="ms-recinto" />
+        <module name="ms-evento" />
+        <module name="ms-ticket" />
+        <module name="ms-historial" />
+        <module name="ms-estado" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="artista-service" target="17" />
+      <module name="evento-service" target="17" />
+      <module name="recinto-service" target="17" />
+      <module name="ticket-service" target="17" />
       <module name="usuario" target="21" />
+      <module name="usuario-service" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -32,6 +41,16 @@
       <module name="artista-service" options="-parameters" />
       <module name="estado-service" options="-parameters" />
       <module name="evento-service" options="-parameters" />
+      <module name="ms-artista" options="-parameters" />
+      <module name="ms-estado" options="-parameters" />
+      <module name="ms-evento" options="-parameters" />
+      <module name="ms-historial" options="-parameters" />
+      <module name="ms-pago" options="-parameters" />
+      <module name="ms-promocion" options="-parameters" />
+      <module name="ms-recinto" options="-parameters" />
+      <module name="ms-ticket" options="-parameters" />
+      <module name="ms-usuario" options="-parameters" />
+      <module name="ms-venta" options="-parameters" />
       <module name="recinto-service" options="-parameters" />
       <module name="ticket-service" options="-parameters" />
       <module name="usuario" options="-parameters" />

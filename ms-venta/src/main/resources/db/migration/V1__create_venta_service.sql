@@ -1,8 +1,3 @@
-CREATE TABLE estado_venta (
-    id_estado_venta BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre_estado_venta VARCHAR(25)
-);
-
 CREATE TABLE venta (
     id_venta BIGINT AUTO_INCREMENT PRIMARY KEY,
     fecha_venta DATE NOT NULL,
@@ -24,5 +19,3 @@ CREATE TABLE detalle_venta (
     sector_id_sector BIGINT,
     FOREIGN KEY (venta_id_venta) REFERENCES venta(id_venta)
 );
-
-INSERT INTO estado_venta (nombre_estado_venta) VALUES ('Pendiente'), ('Confirmada'), ('Cancelada'), ('Reembolsada');

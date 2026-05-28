@@ -32,6 +32,7 @@ public class Venta {
     @Column(name = "cod_autorizacion", nullable = false)
     private Integer cod_autorizacion;
 
-    @Column(name = "estado_venta_id_estado")
+    @NotNull(message = "El estado de venta es requerido")
+    @Column(name = "estado_venta_id_estado", nullable = false)
     private Long estado_venta_id_estado;
 }
