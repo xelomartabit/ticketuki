@@ -1,9 +1,6 @@
 package com.ticketuki.eventoservice.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,20 +17,16 @@ public class Evento {
     @Column(name = "id_evento")
     private Long id_evento;
 
-    @NotBlank(message = "El nombre del evento es requerido")
     @Column(name = "nombre_evento", nullable = false, length = 100)
     private String nombre_evento;
 
-    @NotNull(message = "El aforo es requerido")
-    @Positive(message = "El aforo debe ser positivo")
     @Column(name = "aforo_evento", nullable = false)
     private Integer aforo_evento;
 
-    @NotNull(message = "La fecha es requerida")
     @Column(name = "fecha_evento", nullable = false)
     private LocalDate fecha_evento;
 
-    @Column(name = "descripcion", nullable = false, length = 500)
+    @Column(name = "descripcion", length = 500)
     private String descripcion;
 
     @Column(name = "estado_evento_id_estado")

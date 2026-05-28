@@ -1,16 +1,16 @@
 package com.ticketuki.eventoservice.service;
 
-import com.ticketuki.eventoservice.dto.EventoDTO;
-import com.ticketuki.eventoservice.model.Evento;
+import com.ticketuki.eventoservice.dto.EventoRequestDTO;
+import com.ticketuki.eventoservice.dto.EventoResponseDTO;
 import com.ticketuki.eventoservice.exception.EventoNotFoundException;
+import com.ticketuki.eventoservice.model.Evento;
 import com.ticketuki.eventoservice.repository.EventoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 public class EventoService {
     private final EventoRepository eventoRepository;
 
-    private EventoDTO toResponseDTO(Evento evento) {
-        return new EventoDTO(
+    private EventoResponseDTO toResponseDTO(Evento evento) {
+        return new EventoResponseDTO(
                 evento.getId_evento(),
                 evento.getNombre_evento(),
                 evento.getAforo_evento(),
@@ -29,21 +29,25 @@ public class EventoService {
                 evento.getRecinto_id_recinto());
     }
 
-    public List<EventoDTO> obtenerTodos() {
+    @Transactional(readOnly = true)
+    public List<EventoResponseDTO> obtenerTodos() {
         log.info("Obteniendo todos los eventos");
         return eventoRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public Optional<EventoDTO> obtenerPorId(Long id) {
+    @Transactional(readOnly = true)
+    public EventoResponseDTO obtenerPorId(Long id) {
         log.info("Obteniendo evento por id: {}", id);
         return eventoRepository.findById(id)
-                .map(this::toResponseDTO);
+                .map(this::toResponseDTO)
+                .orElseThrow(() -> new EventoNotFoundException("Evento no encontrado: " + id));
     }
 
-    public EventoDTO crear(EventoDTO eventoDTO) {
+    @Transactional
+    public EventoResponseDTO crear(EventoRequestDTO eventoDTO) {
         log.info("Creando evento: {}", eventoDTO.getNombre_evento());
         Evento evento = new Evento(null,
                 eventoDTO.getNombre_evento(),
@@ -55,10 +59,14 @@ public class EventoService {
         return toResponseDTO(eventoRepository.save(evento));
     }
 
-    public EventoDTO actualizar(Long id, EventoDTO eventoDTO) {
+    @Transactional
+    public EventoResponseDTO actualizar(Long id, EventoRequestDTO eventoDTO) {
         log.info("Actualizando evento: {}", id);
         Evento evento = eventoRepository.findById(id)
-            .orElseThrow(() -> new EventoNotFoundException("Evento no encontrado: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Evento no encontrado para actualizar: {}", id);
+                    return new EventoNotFoundException("Evento no encontrado: " + id);
+                });
         evento.setNombre_evento(eventoDTO.getNombre_evento());
         evento.setAforo_evento(eventoDTO.getAforo_evento());
         evento.setFecha_evento(eventoDTO.getFecha_evento());
@@ -68,32 +76,43 @@ public class EventoService {
         return toResponseDTO(eventoRepository.save(evento));
     }
 
+    @Transactional
     public void eliminar(Long id) {
         log.info("Eliminando evento: {}", id);
+        if (!eventoRepository.existsById(id)) {
+            log.warn("Evento no encontrado para eliminar: {}", id);
+            throw new EventoNotFoundException("Evento no encontrado: " + id);
+        }
         eventoRepository.deleteById(id);
     }
 
-    public List<EventoDTO> obtenerPorFecha(LocalDate fecha) {
+    @Transactional(readOnly = true)
+    public List<EventoResponseDTO> obtenerPorFecha(LocalDate fecha) {
         log.info("Buscando eventos por fecha: {}", fecha);
-        return eventoRepository.findByFecha(fecha)
+        return eventoRepository.findByFechaEvento(fecha)
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public List<EventoDTO> obtenerPorRecinto(Long recintoId) {
+    @Transactional(readOnly = true)
+    public List<EventoResponseDTO> obtenerPorRecinto(Long recintoId) {
         log.info("Buscando eventos por recinto: {}", recintoId);
-        return eventoRepository.findByRecinto(recintoId)
+        return eventoRepository.findByRecintoIdRecinto(recintoId)
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    public Optional<EventoDTO> cambiarEstado(Long id, Long idEstado) {
+    @Transactional
+    public EventoResponseDTO cambiarEstado(Long id, Long idEstado) {
         log.info("Cambiando estado del evento {} a {}", id, idEstado);
-        return eventoRepository.findById(id).map(evento -> {
-            evento.setEstado_evento_id_estado(idEstado);
-            return toResponseDTO(eventoRepository.save(evento));
-        });
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Evento no encontrado para cambiar estado: {}", id);
+                    return new EventoNotFoundException("Evento no encontrado: " + id);
+                });
+        evento.setEstado_evento_id_estado(idEstado);
+        return toResponseDTO(eventoRepository.save(evento));
     }
 }
