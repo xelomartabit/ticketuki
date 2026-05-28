@@ -19,6 +19,6 @@ public class EstadoTicket {
     private Long id_estado_ticket;
 
     @NotBlank(message = "El nombre del estado es requerido")
-    @Column(name = "nombre_estado_ticket", length = 25)
+    @Column(name = "nombre_estado_ticket", length = 25, unique = true)
     private String nombre_estado_ticket;
 }

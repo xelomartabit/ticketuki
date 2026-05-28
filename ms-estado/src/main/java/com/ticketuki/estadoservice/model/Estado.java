@@ -19,6 +19,6 @@ public class Estado {
     private Long id_estado_evento;
 
     @NotBlank(message = "El nombre del estado es requerido")
-    @Column(name = "nombre_estado_evento", length = 25)
+    @Column(name = "nombre_estado_evento", length = 25, unique = true)
     private String nombre_estado_evento;
 }
