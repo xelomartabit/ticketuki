@@ -77,7 +77,7 @@ public class VentaService {
         return ventaRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -85,7 +85,7 @@ public class VentaService {
         return ventaRepository.findByFecha_ventaBetween(inicio, fin)
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -114,6 +114,6 @@ public class VentaService {
         return detalleVentaRepository.findByVenta_id_venta(ventaId)
                 .stream()
                 .map(this::mapDetalleToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
