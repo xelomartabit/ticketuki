@@ -19,26 +19,39 @@ public class EventoService {
     private final EventoRepository eventoRepository;
 
     private EventoDTO toResponseDTO(Evento evento) {
-        return new EventoDTO(evento.getId_evento(), evento.getNombre_evento(),
-            evento.getAforo_evento(), evento.getFecha_evento(), evento.getDescripcion(),
-            evento.getEstado_evento_id_estado(), evento.getRecinto_id_recinto());
+        return new EventoDTO(
+                evento.getId_evento(),
+                evento.getNombre_evento(),
+                evento.getAforo_evento(),
+                evento.getFecha_evento(),
+                evento.getDescripcion(),
+                evento.getEstado_evento_id_estado(),
+                evento.getRecinto_id_recinto());
     }
 
     public List<EventoDTO> obtenerTodos() {
         log.info("Obteniendo todos los eventos");
-        return eventoRepository.findAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return eventoRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public Optional<EventoDTO> obtenerPorId(Long id) {
         log.info("Obteniendo evento por id: {}", id);
-        return eventoRepository.findById(id).map(this::toResponseDTO);
+        return eventoRepository.findById(id)
+                .map(this::toResponseDTO);
     }
 
     public EventoDTO crear(EventoDTO eventoDTO) {
         log.info("Creando evento: {}", eventoDTO.getNombre_evento());
-        Evento evento = new Evento(null, eventoDTO.getNombre_evento(), eventoDTO.getAforo_evento(),
-            eventoDTO.getFecha_evento(), eventoDTO.getDescripcion(),
-            eventoDTO.getEstado_evento_id_estado(), eventoDTO.getRecinto_id_recinto());
+        Evento evento = new Evento(null,
+                eventoDTO.getNombre_evento(),
+                eventoDTO.getAforo_evento(),
+                eventoDTO.getFecha_evento(),
+                eventoDTO.getDescripcion(),
+                eventoDTO.getEstado_evento_id_estado(),
+                eventoDTO.getRecinto_id_recinto());
         return toResponseDTO(eventoRepository.save(evento));
     }
 
@@ -62,12 +75,18 @@ public class EventoService {
 
     public List<EventoDTO> obtenerPorFecha(LocalDate fecha) {
         log.info("Buscando eventos por fecha: {}", fecha);
-        return eventoRepository.findByFecha(fecha).stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return eventoRepository.findByFecha(fecha)
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public List<EventoDTO> obtenerPorRecinto(Long recintoId) {
         log.info("Buscando eventos por recinto: {}", recintoId);
-        return eventoRepository.findByRecinto(recintoId).stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return eventoRepository.findByRecinto(recintoId)
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public Optional<EventoDTO> cambiarEstado(Long id, Long idEstado) {
