@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request, null);
     }
 
+    @ExceptionHandler(ArtistaEventoDuplicadoException.class)
+    public ResponseEntity<ErrorResponse> handleArtistaEventoDuplicado(ArtistaEventoDuplicadoException ex, HttpServletRequest request) {
+        log.warn("Asociación duplicada: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
         log.warn("Error de validación: {}", ex.getMessage());

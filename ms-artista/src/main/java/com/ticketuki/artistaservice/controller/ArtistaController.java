@@ -1,6 +1,7 @@
 package com.ticketuki.artistaservice.controller;
 
-import com.ticketuki.artistaservice.dto.ArtistaDTO;
+import com.ticketuki.artistaservice.dto.ArtistaRequestDTO;
+import com.ticketuki.artistaservice.dto.ArtistaResponseDTO;
 import com.ticketuki.artistaservice.service.ArtistaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,22 +20,22 @@ public class ArtistaController {
     private final ArtistaService artistaService;
 
     @GetMapping
-    public ResponseEntity<List<ArtistaDTO>> listarArtistas() {
+    public ResponseEntity<List<ArtistaResponseDTO>> listarArtistas() {
         return ResponseEntity.ok(artistaService.listarArtistas());
     }
 
     @PostMapping
-    public ResponseEntity<ArtistaDTO> crearArtista(@Valid @RequestBody ArtistaDTO dto) {
+    public ResponseEntity<ArtistaResponseDTO> crearArtista(@Valid @RequestBody ArtistaRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(artistaService.crearArtista(dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ArtistaDTO> obtenerArtista(@PathVariable Long id) {
+    public ResponseEntity<ArtistaResponseDTO> obtenerArtista(@PathVariable Long id) {
         return ResponseEntity.ok(artistaService.obtenerArtista(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArtistaDTO> actualizarArtista(@PathVariable Long id, @Valid @RequestBody ArtistaDTO dto) {
+    public ResponseEntity<ArtistaResponseDTO> actualizarArtista(@PathVariable Long id, @Valid @RequestBody ArtistaRequestDTO dto) {
         return ResponseEntity.ok(artistaService.actualizarArtista(id, dto));
     }
 
@@ -45,7 +46,7 @@ public class ArtistaController {
     }
 
     @GetMapping("/genero/{genero}")
-    public ResponseEntity<List<ArtistaDTO>> listarPorGenero(@PathVariable String genero) {
+    public ResponseEntity<List<ArtistaResponseDTO>> listarPorGenero(@PathVariable String genero) {
         return ResponseEntity.ok(artistaService.listarPorGenero(genero));
     }
 
@@ -62,7 +63,7 @@ public class ArtistaController {
     }
 
     @GetMapping("/evento/{idEvento}")
-    public ResponseEntity<List<ArtistaDTO>> obtenerArtistasPorEvento(@PathVariable Long idEvento) {
+    public ResponseEntity<List<ArtistaResponseDTO>> obtenerArtistasPorEvento(@PathVariable Long idEvento) {
         return ResponseEntity.ok(artistaService.obtenerArtistasPorEvento(idEvento));
     }
 }
