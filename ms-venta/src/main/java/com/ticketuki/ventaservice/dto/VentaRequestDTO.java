@@ -1,21 +1,18 @@
 package com.ticketuki.ventaservice.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VentaDTO {
-
-    private Long id_venta;
-
-    @NotNull(message = "La fecha de venta es requerida")
-    private LocalDate fecha_venta;
+public class VentaRequestDTO {
 
     @NotBlank(message = "El medio de pago es requerido")
     private String medio_pago;
@@ -23,6 +20,10 @@ public class VentaDTO {
     @NotNull(message = "El código de autorización es requerido")
     private Integer cod_autorizacion;
 
-    @NotNull(message = "El estado de venta es requerido")
+    @NotNull(message = "El estado de la venta es requerido")
     private Long estado_venta_id_estado;
+
+    @Valid
+    @NotEmpty(message = "La venta debe tener al menos un detalle")
+    private List<DetalleVentaRequestDTO> detalles;
 }
