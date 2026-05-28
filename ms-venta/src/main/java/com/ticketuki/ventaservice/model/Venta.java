@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +24,7 @@ public class Venta {
 
     @NotNull(message = "La fecha de venta es requerida")
     @Column(name = "fecha_venta", nullable = false)
-    private LocalDate fecha_venta;
+    private LocalDateTime fecha_venta;
 
     @NotBlank(message = "El medio de pago es requerido")
     @Column(name = "medio_pago", nullable = false, length = 10)
@@ -32,7 +34,18 @@ public class Venta {
     @Column(name = "cod_autorizacion", nullable = false)
     private Integer cod_autorizacion;
 
-    @NotNull(message = "El estado de venta es requerido")
-    @Column(name = "estado_venta_id_estado", nullable = false)
+    @NotNull(message = "El monto total es requerido")
+    @Column(name = "monto_total", nullable = false)
+    private Integer monto_total;
+
+    @Column(name = "estado_venta_id_estado")
     private Long estado_venta_id_estado;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime created_at;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updated_at;
 }

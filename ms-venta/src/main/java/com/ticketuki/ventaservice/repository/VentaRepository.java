@@ -5,12 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
 
     @Query("SELECT v FROM Venta v WHERE v.fecha_venta BETWEEN :inicio AND :fin")
-    List<Venta> findByFecha_ventaBetween(@Param("inicio") LocalDate inicio, @Param("fin") LocalDate fin);
+    List<Venta> findByFecha_ventaBetween(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 }
