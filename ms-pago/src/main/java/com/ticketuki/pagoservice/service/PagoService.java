@@ -45,7 +45,7 @@ public class PagoService {
     private Long obtenerIdEstadoTicket(String fragmento) {
         try {
             List<EstadoResumenDTO> estados = estadoWebClient.get()
-                    .uri("/api/v1/estadosTicket")
+                    .uri("/estadosTicket")
                     .retrieve()
                     .bodyToFlux(EstadoResumenDTO.class)
                     .collectList()
@@ -66,7 +66,7 @@ public class PagoService {
     private Long obtenerIdEstadoVenta(String fragmento) {
         try {
             List<EstadoResumenDTO> estados = estadoWebClient.get()
-                    .uri("/api/v1/estadosVenta")
+                    .uri("/estadosVenta")
                     .retrieve()
                     .bodyToFlux(EstadoResumenDTO.class)
                     .collectList()
@@ -92,7 +92,7 @@ public class PagoService {
     private void validarVentaExiste(Long ventaId) {
         try {
             ventaWebClient.get()
-                    .uri("/api/v1/ventas/{id}", ventaId)
+                    .uri("/ventas/{id}", ventaId)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError,
                             response -> Mono.error(new IllegalArgumentException("Venta no encontrada con id: " + ventaId)))
@@ -108,7 +108,7 @@ public class PagoService {
     private void validarUsuarioExiste(Long usuarioId) {
         try {
             usuarioWebClient.get()
-                    .uri("/api/v1/usuarios/{id}", usuarioId)
+                    .uri("/usuarios/{id}", usuarioId)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError,
                             response -> Mono.error(new IllegalArgumentException("Usuario no encontrado con id: " + usuarioId)))
@@ -129,7 +129,7 @@ public class PagoService {
         }
         try {
             List<TicketResumenDTO> tickets = ticketWebClient.get()
-                    .uri("/api/v1/tickets/venta/{ventaId}", ventaId)
+                    .uri("/tickets/venta/{ventaId}", ventaId)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<TicketResumenDTO>>() {})
                     .block();
@@ -142,7 +142,7 @@ public class PagoService {
             for (TicketResumenDTO ticket : tickets) {
                 try {
                     ticketWebClient.put()
-                            .uri("/api/v1/tickets/{id}/estado/{idEstado}", ticket.getId_ticket(), idEstadoTicketCancelado)
+                            .uri("/tickets/{id}/estado/{idEstado}", ticket.getId_ticket(), idEstadoTicketCancelado)
                             .retrieve()
                             .bodyToMono(Void.class)
                             .block();
@@ -164,7 +164,7 @@ public class PagoService {
         }
         try {
             ventaWebClient.put()
-                    .uri("/api/v1/ventas/{id}/estado/{idEstado}", ventaId, idEstadoVentaAnulada)
+                    .uri("/ventas/{id}/estado/{idEstado}", ventaId, idEstadoVentaAnulada)
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();

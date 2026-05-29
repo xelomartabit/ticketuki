@@ -53,7 +53,7 @@ public class VentaService {
         if (estadosCache == null) {
             try {
                 java.util.List<EstadoVentaDTO> lista = webClient.get()
-                        .uri("/api/v1/estadosVenta")
+                        .uri("/estadosVenta")
                         .retrieve()
                         .bodyToFlux(EstadoVentaDTO.class)
                         .collectList()
@@ -75,7 +75,7 @@ public class VentaService {
             if (cached != null) return cached;
             // Si no está en cache, consultar directamente
             return webClient.get()
-                    .uri("/api/v1/estadosVenta/{id}", idEstado)
+                    .uri("/estadosVenta/{id}", idEstado)
                     .retrieve()
                     .bodyToMono(EstadoVentaDTO.class)
                     .block();

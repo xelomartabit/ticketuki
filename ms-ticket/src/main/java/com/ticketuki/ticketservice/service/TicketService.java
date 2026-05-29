@@ -71,7 +71,7 @@ public class TicketService {
     private List<EstadoTicketDTO> obtenerEstadosTicket() {
         if (estadosCache == null) {
             List<EstadoTicketDTO> estados = estadoWebClient.get()
-                    .uri("/api/v1/estadosTicket")
+                    .uri("/estadosTicket")
                     .retrieve()
                     .bodyToFlux(EstadoTicketDTO.class)
                     .collectList()
@@ -143,7 +143,7 @@ public class TicketService {
 
     private void validarEstado(Long idEstado) {
         estadoWebClient.get()
-                .uri("/api/v1/estadosTicket/{id}", idEstado)
+                .uri("/estadosTicket/{id}", idEstado)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response ->
                         response.createException().map(e ->
@@ -179,7 +179,7 @@ public class TicketService {
 
     private void validarVenta(Long idVenta) {
         ventaWebClient.get()
-                .uri("/api/v1/ventas/{id}", idVenta)
+                .uri("/ventas/{id}", idVenta)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response ->
                         response.createException().map(e ->
