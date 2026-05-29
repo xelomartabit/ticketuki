@@ -1,6 +1,10 @@
 package com.ticketuki.ticketservice.controller;
 
-import com.ticketuki.ticketservice.dto.TicketDTO;
+import com.ticketuki.ticketservice.dto.TicketRequestDTO;
+import com.ticketuki.ticketservice.dto.TicketResponseDTO;
+import com.ticketuki.ticketservice.dto.TicketUpdateDTO;
+import com.ticketuki.ticketservice.dto.TransferirTicketDTO;
+import com.ticketuki.ticketservice.dto.ValidarTicketResponseDTO;
 import com.ticketuki.ticketservice.service.TicketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,46 +23,73 @@ public class TicketController {
     private final TicketService ticketService;
 
     @GetMapping
-    public ResponseEntity<List<TicketDTO>> listarTickets() {
+    public ResponseEntity<List<TicketResponseDTO>> listarTickets() {
         return ResponseEntity.ok(ticketService.listarTickets());
     }
 
     @PostMapping
-    public ResponseEntity<TicketDTO> crearTicket(@Valid @RequestBody TicketDTO dto) {
+    public ResponseEntity<TicketResponseDTO> crearTicket(@Valid @RequestBody TicketRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketService.crearTicket(dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketDTO> obtenerTicket(@PathVariable Long id) {
-        return ticketService.obtenerTicket(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TicketResponseDTO> obtenerTicket(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.obtenerTicket(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TicketResponseDTO> actualizarTicket(
+            @PathVariable Long id, @Valid @RequestBody TicketUpdateDTO dto) {
+        return ResponseEntity.ok(ticketService.actualizarTicket(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarTicket(@PathVariable Long id) {
+        ticketService.eliminarTicket(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/evento/{idEvento}")
-    public ResponseEntity<List<TicketDTO>> listarPorEvento(@PathVariable Long idEvento) {
+    public ResponseEntity<List<TicketResponseDTO>> listarPorEvento(@PathVariable Long idEvento) {
         return ResponseEntity.ok(ticketService.listarPorEvento(idEvento));
     }
 
     @GetMapping("/venta/{idVenta}")
-    public ResponseEntity<List<TicketDTO>> listarPorVenta(@PathVariable Long idVenta) {
+    public ResponseEntity<List<TicketResponseDTO>> listarPorVenta(@PathVariable Long idVenta) {
         return ResponseEntity.ok(ticketService.listarPorVenta(idVenta));
     }
 
     @GetMapping("/sector/{idSector}")
-    public ResponseEntity<List<TicketDTO>> listarPorSector(@PathVariable Long idSector) {
+    public ResponseEntity<List<TicketResponseDTO>> listarPorSector(@PathVariable Long idSector) {
         return ResponseEntity.ok(ticketService.listarPorSector(idSector));
     }
 
     @PutMapping("/{id}/estado/{idEstado}")
-    public ResponseEntity<TicketDTO> cambiarEstado(@PathVariable Long id, @PathVariable Long idEstado) {
+    public ResponseEntity<TicketResponseDTO> cambiarEstado(
+            @PathVariable Long id, @PathVariable Long idEstado) {
         return ResponseEntity.ok(ticketService.cambiarEstado(id, idEstado));
     }
 
     @GetMapping("/qr/{codQR}")
-    public ResponseEntity<TicketDTO> obtenerPorQR(@PathVariable String codQR) {
+    public ResponseEntity<TicketResponseDTO> obtenerPorQR(@PathVariable String codQR) {
         return ticketService.obtenerPorQR(codQR)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/titular/{run}")
+    public ResponseEntity<List<TicketResponseDTO>> listarPorRun(@PathVariable String run) {
+        return ResponseEntity.ok(ticketService.listarPorRun(run));
+    }
+
+    @PostMapping("/validar/{codQR}")
+    public ResponseEntity<ValidarTicketResponseDTO> validarTicket(@PathVariable String codQR) {
+        return ResponseEntity.ok(ticketService.validarTicket(codQR));
+    }
+
+    @PutMapping("/{id}/transferir")
+    public ResponseEntity<TicketResponseDTO> transferirTicket(
+            @PathVariable Long id, @Valid @RequestBody TransferirTicketDTO dto) {
+        return ResponseEntity.ok(ticketService.transferirTicket(id, dto));
     }
 }

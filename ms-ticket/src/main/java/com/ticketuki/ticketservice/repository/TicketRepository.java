@@ -2,8 +2,6 @@ package com.ticketuki.ticketservice.repository;
 
 import com.ticketuki.ticketservice.model.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -11,15 +9,16 @@ import java.util.Optional;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
-    @Query("SELECT t FROM Ticket t WHERE t.cod_qr = :codQR")
-    Optional<Ticket> findByCod_qr(@Param("codQR") String codQR);
+    Optional<Ticket> findByCod_qr(String cod_qr);
 
-    @Query("SELECT t FROM Ticket t WHERE t.venta_id_venta = :ventaId")
-    List<Ticket> findByVenta_id_venta(@Param("ventaId") Long ventaId);
+    List<Ticket> findByVenta_id_venta(Long venta_id_venta);
 
-    @Query("SELECT t FROM Ticket t WHERE t.evento_id_evento = :eventoId")
-    List<Ticket> findByEvento_id_evento(@Param("eventoId") Long eventoId);
+    List<Ticket> findByEvento_id_evento(Long evento_id_evento);
 
-    @Query("SELECT t FROM Ticket t WHERE t.sector_id_sector = :sectorId")
-    List<Ticket> findBySector_id_sector(@Param("sectorId") Long sectorId);
+    List<Ticket> findBySector_id_sector(Long sector_id_sector);
+
+    List<Ticket> findByRun_titular(String run_titular);
+
+    boolean existsByNum_asientoAndEvento_id_eventoAndSector_id_sector(
+            Integer num_asiento, Long evento_id_evento, Long sector_id_sector);
 }
