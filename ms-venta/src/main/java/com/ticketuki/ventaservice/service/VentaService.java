@@ -21,7 +21,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -47,10 +46,36 @@ public class VentaService {
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
+    // Cache de estados de venta para evitar N llamadas HTTP al listar ventas
+    private volatile java.util.Map<Long, EstadoVentaDTO> estadosCache = null;
+
+    private java.util.Map<Long, EstadoVentaDTO> obtenerCacheEstados() {
+        if (estadosCache == null) {
+            try {
+                java.util.List<EstadoVentaDTO> lista = webClient.get()
+                        .uri("/api/v1/estadosVenta")
+                        .retrieve()
+                        .bodyToFlux(EstadoVentaDTO.class)
+                        .collectList()
+                        .block();
+                estadosCache = new java.util.concurrent.ConcurrentHashMap<>();
+                if (lista != null) lista.forEach(e -> estadosCache.put(e.getId(), e));
+                log.info("Cache de estados de venta cargada: {} estados", estadosCache.size());
+            } catch (Exception e) {
+                log.warn("No se pudo cargar cache de estados de venta: {}", e.getMessage());
+                estadosCache = new java.util.concurrent.ConcurrentHashMap<>();
+            }
+        }
+        return estadosCache;
+    }
+
     private EstadoVentaDTO obtenerEstado(Long idEstado) {
         try {
+            EstadoVentaDTO cached = obtenerCacheEstados().get(idEstado);
+            if (cached != null) return cached;
+            // Si no está en cache, consultar directamente
             return webClient.get()
-                    .uri("/estadosVenta/{id}", idEstado)
+                    .uri("/api/v1/estadosVenta/{id}", idEstado)
                     .retrieve()
                     .bodyToMono(EstadoVentaDTO.class)
                     .block();
@@ -177,14 +202,14 @@ public class VentaService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<VentaResponseDTO> obtenerVenta(Long id) {
-        return ventaRepository.findById(id).map(v -> {
-            List<DetalleVentaResponseDTO> detalles = detalleVentaRepository
-                    .findByVenta_id_venta(v.getId_venta()).stream()
-                    .map(this::mapDetalleToDTO)
-                    .toList();
-            return toResponseDTO(v, detalles);
-        });
+    public VentaResponseDTO obtenerVenta(Long id) {
+        Venta v = ventaRepository.findById(id)
+                .orElseThrow(() -> new VentaNotFoundException("Venta no encontrada: " + id));
+        List<DetalleVentaResponseDTO> detalles = detalleVentaRepository
+                .findByVenta_id_venta(v.getId_venta()).stream()
+                .map(this::mapDetalleToDTO)
+                .toList();
+        return toResponseDTO(v, detalles);
     }
 
     @Transactional(readOnly = true)
@@ -204,8 +229,10 @@ public class VentaService {
     // ── Operaciones de detalle ────────────────────────────────────────────────
 
     @Transactional(readOnly = true)
-    public Optional<DetalleVentaResponseDTO> obtenerDetalle(Long id) {
-        return detalleVentaRepository.findById(id).map(this::mapDetalleToDTO);
+    public DetalleVentaResponseDTO obtenerDetalle(Long id) {
+        return detalleVentaRepository.findById(id)
+                .map(this::mapDetalleToDTO)
+                .orElseThrow(() -> new VentaNotFoundException("Detalle de venta no encontrado: " + id));
     }
 
     @Transactional(readOnly = true)

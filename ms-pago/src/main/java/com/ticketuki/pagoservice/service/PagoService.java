@@ -1,5 +1,6 @@
 package com.ticketuki.pagoservice.service;
 
+import com.ticketuki.pagoservice.dto.EstadoResumenDTO;
 import com.ticketuki.pagoservice.dto.PagoRequestDTO;
 import com.ticketuki.pagoservice.dto.PagoResponseDTO;
 import com.ticketuki.pagoservice.dto.TicketResumenDTO;
@@ -9,7 +10,6 @@ import com.ticketuki.pagoservice.model.Pago;
 import com.ticketuki.pagoservice.repository.PagoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -27,21 +27,60 @@ public class PagoService {
     private final WebClient ventaWebClient;
     private final WebClient usuarioWebClient;
     private final WebClient ticketWebClient;
-
-    @Value("${ms.estado.ticket.cancelado.id}")
-    private Long idEstadoTicketCancelado;
-
-    @Value("${ms.estado.venta.anulada.id}")
-    private Long idEstadoVentaAnulada;
+    private final WebClient estadoWebClient;
 
     public PagoService(PagoRepository pagoRepository,
                        @Qualifier("ventaWebClient") WebClient ventaWebClient,
                        @Qualifier("usuarioWebClient") WebClient usuarioWebClient,
-                       @Qualifier("ticketWebClient") WebClient ticketWebClient) {
+                       @Qualifier("ticketWebClient") WebClient ticketWebClient,
+                       @Qualifier("estadoWebClient") WebClient estadoWebClient) {
         this.pagoRepository = pagoRepository;
         this.ventaWebClient = ventaWebClient;
         this.usuarioWebClient = usuarioWebClient;
         this.ticketWebClient = ticketWebClient;
+        this.estadoWebClient = estadoWebClient;
+    }
+
+    // Busca el ID de un estado de ticket por fragmento de nombre (ej. "CANCELADO")
+    private Long obtenerIdEstadoTicket(String fragmento) {
+        try {
+            List<EstadoResumenDTO> estados = estadoWebClient.get()
+                    .uri("/api/v1/estadosTicket")
+                    .retrieve()
+                    .bodyToFlux(EstadoResumenDTO.class)
+                    .collectList()
+                    .block();
+            if (estados == null) return null;
+            return estados.stream()
+                    .filter(e -> e.getNombre() != null && e.getNombre().toUpperCase().contains(fragmento.toUpperCase()))
+                    .map(EstadoResumenDTO::getId)
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            log.warn("No se pudo obtener estado de ticket '{}': {}", fragmento, e.getMessage());
+            return null;
+        }
+    }
+
+    // Busca el ID de un estado de venta por fragmento de nombre (ej. "ANULADA")
+    private Long obtenerIdEstadoVenta(String fragmento) {
+        try {
+            List<EstadoResumenDTO> estados = estadoWebClient.get()
+                    .uri("/api/v1/estadosVenta")
+                    .retrieve()
+                    .bodyToFlux(EstadoResumenDTO.class)
+                    .collectList()
+                    .block();
+            if (estados == null) return null;
+            return estados.stream()
+                    .filter(e -> e.getNombre() != null && e.getNombre().toUpperCase().contains(fragmento.toUpperCase()))
+                    .map(EstadoResumenDTO::getId)
+                    .findFirst()
+                    .orElse(null);
+        } catch (Exception e) {
+            log.warn("No se pudo obtener estado de venta '{}': {}", fragmento, e.getMessage());
+            return null;
+        }
     }
 
     private PagoResponseDTO toResponseDTO(Pago p) {
@@ -53,7 +92,7 @@ public class PagoService {
     private void validarVentaExiste(Long ventaId) {
         try {
             ventaWebClient.get()
-                    .uri("/ventas/{id}", ventaId)
+                    .uri("/api/v1/ventas/{id}", ventaId)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError,
                             response -> Mono.error(new IllegalArgumentException("Venta no encontrada con id: " + ventaId)))
@@ -69,7 +108,7 @@ public class PagoService {
     private void validarUsuarioExiste(Long usuarioId) {
         try {
             usuarioWebClient.get()
-                    .uri("/usuarios/{id}", usuarioId)
+                    .uri("/api/v1/usuarios/{id}", usuarioId)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError,
                             response -> Mono.error(new IllegalArgumentException("Usuario no encontrado con id: " + usuarioId)))
@@ -83,9 +122,14 @@ public class PagoService {
     }
 
     private void cancelarTicketsDeLaVenta(Long ventaId) {
+        Long idEstadoTicketCancelado = obtenerIdEstadoTicket("CANCELADO");
+        if (idEstadoTicketCancelado == null) {
+            log.warn("No se encontró estado 'CANCELADO' para tickets, se omite la cancelación");
+            return;
+        }
         try {
             List<TicketResumenDTO> tickets = ticketWebClient.get()
-                    .uri("/tickets/venta/{ventaId}", ventaId)
+                    .uri("/api/v1/tickets/venta/{ventaId}", ventaId)
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<List<TicketResumenDTO>>() {})
                     .block();
@@ -98,7 +142,7 @@ public class PagoService {
             for (TicketResumenDTO ticket : tickets) {
                 try {
                     ticketWebClient.put()
-                            .uri("/tickets/{id}/estado/{idEstado}", ticket.getId_ticket(), idEstadoTicketCancelado)
+                            .uri("/api/v1/tickets/{id}/estado/{idEstado}", ticket.getId_ticket(), idEstadoTicketCancelado)
                             .retrieve()
                             .bodyToMono(Void.class)
                             .block();
@@ -113,9 +157,14 @@ public class PagoService {
     }
 
     private void anularVenta(Long ventaId) {
+        Long idEstadoVentaAnulada = obtenerIdEstadoVenta("ANULADA");
+        if (idEstadoVentaAnulada == null) {
+            log.warn("No se encontró estado 'ANULADA' para ventas, se omite la anulación");
+            return;
+        }
         try {
             ventaWebClient.put()
-                    .uri("/ventas/{id}/estado/{idEstado}", ventaId, idEstadoVentaAnulada)
+                    .uri("/api/v1/ventas/{id}/estado/{idEstado}", ventaId, idEstadoVentaAnulada)
                     .retrieve()
                     .bodyToMono(Void.class)
                     .block();
@@ -159,8 +208,9 @@ public class PagoService {
         return toResponseDTO(pagoRepository.save(p));
     }
 
+    // Fase 1: actualiza solo el estado del pago en BD (se confirma antes de las llamadas HTTP)
     @Transactional
-    public PagoResponseDTO procesarReembolso(Long id) {
+    protected Pago marcarPagoReembolsado(Long id) {
         Pago p = pagoRepository.findById(id)
                 .orElseThrow(() -> new PagoNotFoundException("Pago no encontrado con id: " + id));
         if (p.getEstado() != EstadoPago.COMPLETADO) {
@@ -168,14 +218,17 @@ public class PagoService {
                     "Solo se puede reembolsar un pago en estado COMPLETADO. Estado actual: " + p.getEstado());
         }
         p.setEstado(EstadoPago.REEMBOLSADO);
-        PagoResponseDTO resultado = toResponseDTO(pagoRepository.save(p));
+        return pagoRepository.save(p);
+    }
 
+    // Fase 2: coordina la cancelación de tickets y anulación de venta FUERA de la transacción de BD
+    public PagoResponseDTO procesarReembolso(Long id) {
+        Pago saved = marcarPagoReembolsado(id);
         log.info("Reembolso aprobado para pago {}. Coordinando cancelación de tickets y venta {}",
-                id, p.getVenta_id());
-        cancelarTicketsDeLaVenta(p.getVenta_id());
-        anularVenta(p.getVenta_id());
-
-        return resultado;
+                id, saved.getVenta_id());
+        cancelarTicketsDeLaVenta(saved.getVenta_id());
+        anularVenta(saved.getVenta_id());
+        return toResponseDTO(saved);
     }
 
     @Transactional

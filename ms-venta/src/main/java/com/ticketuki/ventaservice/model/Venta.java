@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -30,9 +31,10 @@ public class Venta {
     @Column(name = "medio_pago", nullable = false, length = 10)
     private String medio_pago;
 
-    @NotNull(message = "El código de autorización es requerido")
-    @Column(name = "cod_autorizacion", nullable = false)
-    private Integer cod_autorizacion;
+    @NotBlank(message = "El código de autorización es requerido")
+    @Size(max = 50, message = "El código de autorización no puede superar los 50 caracteres")
+    @Column(name = "cod_autorizacion", nullable = false, length = 50)
+    private String cod_autorizacion;
 
     @NotNull(message = "El monto total es requerido")
     @Column(name = "monto_total", nullable = false)

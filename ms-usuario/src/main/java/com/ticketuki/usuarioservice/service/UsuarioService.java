@@ -46,6 +46,7 @@ public class UsuarioService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<UsuarioResponseDTO> listarUsuarios() {
         log.info("Mostrando todos los usuarios");
         return usuarioRepository.findAll()
@@ -54,6 +55,7 @@ public class UsuarioService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public UsuarioResponseDTO obtenerUsuarioPorId(Long id) {
         log.info("Buscando usuario por id: {}", id);
         Usuario usuario = usuarioRepository.findById(id)
@@ -128,6 +130,7 @@ public class UsuarioService {
         return toResponseDTO(usuarioActualizado);
     }
 
+    @Transactional
     public void eliminarUsuario(Long id) {
         log.info("Eliminando usuario con ID: {}", id);
 

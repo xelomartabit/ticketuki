@@ -17,6 +17,9 @@ public class WebClientConfig {
     @Value("${ms.ticket.url:http://localhost:8005}")
     private String ticketUrl;
 
+    @Value("${ms.estado.url:http://localhost:8004}")
+    private String estadoUrl;
+
     @Bean("ventaWebClient")
     public WebClient ventaWebClient() {
         return WebClient.builder().baseUrl(ventaUrl).build();
@@ -30,5 +33,10 @@ public class WebClientConfig {
     @Bean("ticketWebClient")
     public WebClient ticketWebClient() {
         return WebClient.builder().baseUrl(ticketUrl).build();
+    }
+
+    @Bean("estadoWebClient")
+    public WebClient estadoWebClient() {
+        return WebClient.builder().baseUrl(estadoUrl).build();
     }
 }

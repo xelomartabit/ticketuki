@@ -34,9 +34,7 @@ public class PromocionController {
     @GetMapping("/{id}")
     public ResponseEntity<PromocionResponseDTO> obtenerPromocion(@PathVariable Long id) {
         log.info("GET /promociones/{} - Obteniendo promoción", id);
-        return promocionService.obtenerPromocion(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(promocionService.obtenerPromocion(id));
     }
 
     @PutMapping("/{id}")

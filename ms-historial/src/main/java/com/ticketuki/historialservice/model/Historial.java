@@ -23,14 +23,14 @@ public class Historial {
     private TipoEntidad entidad;
 
     @Column(name = "id_entidad", nullable = false)
-    private Integer id_entidad;
+    private Long id_entidad;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "accion", length = 50, nullable = false)
     private AccionHistorial accion;
 
     @Column(name = "usuario_id")
-    private Integer usuario_id;
+    private Long usuario_id;
 
     @Column(name = "timestamp")
     private LocalDateTime timestamp;

@@ -14,9 +14,9 @@ public class HistorialResponseDTO {
 
     private Long id_historial;
     private TipoEntidad entidad;
-    private Integer id_entidad;
+    private Long id_entidad;
     private AccionHistorial accion;
-    private Integer usuario_id;
+    private Long usuario_id;
     private LocalDateTime timestamp;
     private String cambios_anteriores;
     private String cambios_nuevos;

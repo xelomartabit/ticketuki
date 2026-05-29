@@ -1,0 +1,2 @@
+ALTER TABLE historial MODIFY COLUMN id_entidad BIGINT NOT NULL;
+ALTER TABLE historial MODIFY COLUMN usuario_id BIGINT;

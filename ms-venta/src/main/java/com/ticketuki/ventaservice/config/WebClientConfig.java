@@ -8,10 +8,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    @Value("${ms-estado.base-url}")
+    @Value("${ms.estado.url:http://localhost:8004}")
     private String estadoBaseUrl;
 
-    @Value("${ms-promocion.base-url:http://localhost:8007}")
+    @Value("${ms.promocion.url:http://localhost:8007}")
     private String promocionBaseUrl;
 
     @Bean

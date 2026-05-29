@@ -1,0 +1,1 @@
+ALTER TABLE venta MODIFY COLUMN cod_autorizacion VARCHAR(50) NOT NULL;

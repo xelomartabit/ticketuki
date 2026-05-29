@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Slf4j
 public class VentaController {
@@ -33,9 +34,7 @@ public class VentaController {
 
     @GetMapping("/ventas/{id}")
     public ResponseEntity<VentaResponseDTO> obtenerVenta(@PathVariable Long id) {
-        return ventaService.obtenerVenta(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(ventaService.obtenerVenta(id));
     }
 
     @PutMapping("/ventas/{id}/estado/{idEstado}")
@@ -52,9 +51,7 @@ public class VentaController {
 
     @GetMapping("/detalleVenta/{id}")
     public ResponseEntity<DetalleVentaResponseDTO> obtenerDetalle(@PathVariable Long id) {
-        return ventaService.obtenerDetalle(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(ventaService.obtenerDetalle(id));
     }
 
     @GetMapping("/detalleVenta/venta/{idVenta}")

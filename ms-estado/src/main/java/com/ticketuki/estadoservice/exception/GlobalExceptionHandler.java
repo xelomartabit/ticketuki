@@ -2,6 +2,7 @@ package com.ticketuki.estadoservice.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,6 +27,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEstadoDuplicado(EstadoDuplicadoException ex, HttpServletRequest request) {
         log.warn("Estado duplicado: {}", ex.getMessage());
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request, null);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        log.warn("Violación de integridad de datos: {}", ex.getMessage());
+        return buildResponse(HttpStatus.CONFLICT, "Ya existe un estado con ese nombre en la misma categoría", request, null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

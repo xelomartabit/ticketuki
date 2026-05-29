@@ -16,12 +16,12 @@ public class HistorialRequestDTO {
     private TipoEntidad entidad;
 
     @NotNull(message = "El ID de entidad es requerido")
-    private Integer id_entidad;
+    private Long id_entidad;
 
     @NotNull(message = "La acción es requerida")
     private AccionHistorial accion;
 
-    private Integer usuario_id;
+    private Long usuario_id;
 
     private String cambios_anteriores;
 

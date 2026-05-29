@@ -65,8 +65,7 @@ public class ArtistaService {
         if (!artistaRepository.existsById(id)) {
             throw new ArtistaNotFoundException("Artista no encontrado: " + id);
         }
-        artistaEventoRepository.findByArtista_id_artista(id)
-                .forEach(artistaEventoRepository::delete);
+        artistaEventoRepository.deleteAll(artistaEventoRepository.findByArtista_id_artista(id));
         artistaRepository.deleteById(id);
     }
 

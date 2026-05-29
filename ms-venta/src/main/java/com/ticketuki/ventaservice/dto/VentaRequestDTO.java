@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,9 @@ public class VentaRequestDTO {
     @NotBlank(message = "El medio de pago es requerido")
     private String medio_pago;
 
-    @NotNull(message = "El código de autorización es requerido")
-    private Integer cod_autorizacion;
+    @NotBlank(message = "El código de autorización es requerido")
+    @Size(max = 50)
+    private String cod_autorizacion;
 
     @NotNull(message = "El estado de la venta es requerido")
     private Long estado_venta_id_estado;

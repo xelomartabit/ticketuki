@@ -11,7 +11,6 @@ import com.ticketuki.ticketservice.exception.TicketOperacionInvalidaException;
 import com.ticketuki.ticketservice.model.Ticket;
 import com.ticketuki.ticketservice.repository.TicketRepository;
 import com.ticketuki.ticketservice.util.QRGenerator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -27,22 +26,25 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class TicketService {
 
     private final TicketRepository ticketRepository;
-
-    @Qualifier("estadoWebClient")
     private final WebClient estadoWebClient;
-
-    @Qualifier("eventoWebClient")
     private final WebClient eventoWebClient;
-
-    @Qualifier("recintoWebClient")
     private final WebClient recintoWebClient;
-
-    @Qualifier("ventaWebClient")
     private final WebClient ventaWebClient;
+
+    public TicketService(TicketRepository ticketRepository,
+                         @Qualifier("estadoWebClient") WebClient estadoWebClient,
+                         @Qualifier("eventoWebClient") WebClient eventoWebClient,
+                         @Qualifier("recintoWebClient") WebClient recintoWebClient,
+                         @Qualifier("ventaWebClient") WebClient ventaWebClient) {
+        this.ticketRepository = ticketRepository;
+        this.estadoWebClient = estadoWebClient;
+        this.eventoWebClient = eventoWebClient;
+        this.recintoWebClient = recintoWebClient;
+        this.ventaWebClient = ventaWebClient;
+    }
 
     // Cache en memoria: se carga una sola vez al primer uso
     private volatile List<EstadoTicketDTO> estadosCache = null;
@@ -177,7 +179,7 @@ public class TicketService {
 
     private void validarVenta(Long idVenta) {
         ventaWebClient.get()
-                .uri("/ventas/{id}", idVenta)
+                .uri("/api/v1/ventas/{id}", idVenta)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response ->
                         response.createException().map(e ->
@@ -219,13 +221,18 @@ public class TicketService {
                 dto.getEvento_id_evento(),
                 dto.getSector_id_sector()
         );
-        // Reintento por colisión de cod_qr (probabilidad extremadamente baja)
+        // Reintento solo por colisión de cod_qr (probabilidad extremadamente baja)
         try {
             return toResponseDTO(ticketRepository.save(ticket));
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            log.warn("Colisión de código QR al crear ticket, reintentando...");
-            ticket.setCod_qr(QRGenerator.generarCodigoQR());
-            return toResponseDTO(ticketRepository.save(ticket));
+            String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+            if (msg.contains("cod_qr") || msg.contains("unique") && !msg.contains("num_asiento")) {
+                log.warn("Colisión de código QR al crear ticket, reintentando...");
+                ticket.setCod_qr(QRGenerator.generarCodigoQR());
+                return toResponseDTO(ticketRepository.save(ticket));
+            }
+            // Otro error de integridad (p.ej. asiento duplicado): relanzar
+            throw e;
         }
     }
 

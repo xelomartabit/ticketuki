@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -71,8 +70,10 @@ public class PromocionService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<PromocionResponseDTO> obtenerPromocion(Long id) {
-        return promocionRepository.findById(id).map(this::toResponseDTO);
+    public PromocionResponseDTO obtenerPromocion(Long id) {
+        return promocionRepository.findById(id)
+                .map(this::toResponseDTO)
+                .orElseThrow(() -> new PromocionNotFoundException("Promoción no encontrada: " + id));
     }
 
     @Transactional(readOnly = true)
