@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# start.sh — Levanta los 10 microservicios de Ticketuki en orden de dependencias.
+# start.sh — Levanta los microservicios de Ticketuki en orden de dependencias,
+# incluyendo ms-auth (8011) y el API Gateway (8080).
 # Usa Java 21 (requerido: Lombok no compila con JDK 24).
 #
 set -euo pipefail
@@ -20,6 +21,7 @@ echo "☕ Usando JAVA_HOME=$JAVA_HOME"
 # --- Orden de arranque (puerto:servicio) -----------------------------------
 # Respeta dependencias: estado y recinto primero; venta/ticket/pago al final.
 ORDER=(
+  "8011:ms-auth"
   "8004:ms-estado"
   "8008:ms-recinto"
   "8001:ms-usuario"
@@ -30,6 +32,7 @@ ORDER=(
   "8006:ms-venta"
   "8005:ms-ticket"
   "8009:ms-pago"
+  "8080:ms-gateway"
 )
 
 # --- Esperar a que un puerto quede escuchando ------------------------------
@@ -47,8 +50,8 @@ wait_port() {
 }
 
 # --- Liberar puertos ocupados por instancias previas -----------------------
-echo "🧹 Liberando puertos 8001-8010 si están ocupados..."
-for p in $(seq 8001 8010); do
+echo "🧹 Liberando puertos (8001-8011 y 8080) si están ocupados..."
+for p in $(seq 8001 8011) 8080; do
   pid=$(lsof -ti "tcp:$p" -sTCP:LISTEN 2>/dev/null || true)
   [ -n "$pid" ] && kill "$pid" 2>/dev/null && echo "   detenido :$p (PID $pid)"
 done

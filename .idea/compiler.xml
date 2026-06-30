@@ -8,6 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ms-usuario" />
+        <module name="ms-auth" />
+        <module name="ms-gateway" />
       </profile>
       <profile name="Annotation profile for ms-promocion" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -58,8 +60,10 @@
       <module name="estado-service" options="-parameters" />
       <module name="evento-service" options="-parameters" />
       <module name="ms-artista" options="-parameters" />
+      <module name="ms-auth" options="-parameters" />
       <module name="ms-estado" options="-parameters" />
       <module name="ms-evento" options="-parameters" />
+      <module name="ms-gateway" options="-parameters" />
       <module name="ms-historial" options="-parameters" />
       <module name="ms-pago" options="-parameters" />
       <module name="ms-promocion" options="-parameters" />

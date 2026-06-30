@@ -16,18 +16,35 @@ Ticketuki es una plataforma de venta y gestión de tickets para eventos, constru
 ## Arquitectura
 
 ```
+                          ┌──────────────────────────┐
+        Cliente  ───────► │      ms-gateway :8080     │  ◄── única puerta de entrada
+                          │  (enrutamiento + JWT)     │
+                          └────────────┬─────────────┘
+                                       │ enruta según el path
+        ┌──────────────┬──────────────┼──────────────┬──────────────┐
+        ▼              ▼              ▼              ▼              ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  ms-usuario  │  │  ms-artista  │  │  ms-evento   │  │  ms-recinto  │  │  ms-estado   │
-│   :8001      │  │   :8002      │  │   :8003      │  │   :8008      │  │   :8004      │
+│   ms-auth    │  │  ms-usuario  │  │  ms-artista  │  │  ms-evento   │  │  ms-recinto  │
+│   :8011      │  │   :8001      │  │   :8002      │  │   :8003      │  │   :8008      │
 └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
 
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  ms-ticket   │  │   ms-venta   │  │   ms-pago    │  │ ms-promocion │  │ ms-historial │
-│   :8005      │  │   :8006      │  │   :8009      │  │   :8007      │  │   :8010      │
+│  ms-estado   │  │  ms-ticket   │  │   ms-venta   │  │   ms-pago    │  │ ms-promocion │
+│   :8004      │  │   :8005      │  │   :8006      │  │   :8009      │  │   :8007      │
 └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
+
+                              ┌──────────────┐
+                              │ ms-historial │
+                              │   :8010      │
+                              └──────────────┘
 ```
 
-Cada microservicio posee su propia base de datos MariaDB aislada, siguiendo el patrón *Database per Service*.
+- **ms-gateway (:8080)** es el *API Gateway*: única puerta de entrada que enruta cada
+  petición al microservicio correcto y valida el token JWT (ver sección *API Gateway y
+  Autenticación*).
+- **ms-auth (:8011)** emite los tokens JWT tras validar las credenciales.
+- Cada microservicio de negocio posee su propia base de datos MariaDB aislada,
+  siguiendo el patrón *Database per Service*.
 
 ---
 
@@ -94,6 +111,14 @@ Registro de auditoría de operaciones realizadas sobre las entidades del sistema
 - Registrar entradas de historial
 - Consultar historial por ID, entidad, usuario y rango de fechas
 
+### ms-auth — Puerto 8011 · BD: `auth_service`
+Servicio de autenticación. Valida credenciales y emite tokens JWT.
+- `POST /auth/login` — recibe `{username, password}` y devuelve un JWT firmado
+
+### ms-gateway — Puerto 8080 · (sin BD)
+API Gateway: única puerta de entrada al sistema. Enruta cada petición al
+microservicio correspondiente y valida el JWT en cada llamada.
+
 ---
 
 ## Tecnologías Utilizadas
@@ -106,6 +131,9 @@ Registro de auditoría de operaciones realizadas sobre las entidades del sistema
 | Base de datos | MariaDB |
 | Migraciones | Flyway |
 | Comunicación inter-servicios | Spring WebFlux (WebClient) |
+| API Gateway | Spring Cloud Gateway |
+| Autenticación | JWT (jjwt) |
+| Monitoreo | Spring Boot Actuator |
 | Validaciones | Jakarta Bean Validation |
 | Build | Maven (Wrapper incluido) |
 
@@ -224,6 +252,74 @@ cd ms-pago && ./mvnw spring-boot:run
 | ms-recinto | http://localhost:8008/recintos |
 | ms-pago | http://localhost:8009/pagos |
 | ms-historial | http://localhost:8010/historial |
+| ms-auth | http://localhost:8011/auth/login |
+| ms-gateway | http://localhost:8080 |
+
+> A través del gateway, todas las rutas se consumen desde `http://localhost:8080`
+> (ej. `http://localhost:8080/usuarios`). Requieren token JWT salvo `/auth/login`.
+
+---
+
+## API Gateway y Autenticación (JWT)
+
+El sistema expone una **única puerta de entrada** a través del **ms-gateway (:8080)**,
+construido con **Spring Cloud Gateway**. El cliente solo conoce el gateway; éste:
+
+1. **Enruta** cada petición al microservicio correcto según el path (configurado en
+   `ms-gateway/src/main/resources/application.yml`).
+2. **Valida el JWT** en cada petición mediante un filtro global (`JwtAuthFilter`),
+   antes de reenviarla. Todas las rutas requieren un token válido **excepto**
+   `/auth/login`.
+
+### Flujo de uso
+
+```bash
+# 1. Obtener un token (ruta pública). Usuario semilla: hodor / holdthedoor1234
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"hodor","password":"holdthedoor1234"}'
+# → { "token": "eyJhbGciOiJI...", "tipo": "Bearer", "username": "hodor", "expiraEnMs": 3600000 }
+
+# 2. Usar el token en cualquier ruta protegida
+curl http://localhost:8080/ventas \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+| Situación | Respuesta del gateway |
+|---|---|
+| Ruta protegida sin token | `401 Unauthorized` |
+| Ruta protegida con token inválido/expirado | `401 Unauthorized` |
+| Ruta protegida con token válido | Reenvía al microservicio (`200`, etc.) |
+| `POST /auth/login` (pública) | `200` + token JWT |
+
+### Detalles de implementación
+
+- **ms-auth (:8011)** firma los tokens (`JwtUtil` + `signWith(secret)`); el **gateway**
+  los valida con el **mismo `secret`** (variable de entorno `JWT_SECRET`, compartida).
+- El gateway no expone lógica de negocio (no tiene controllers): solo **rutas** (YAML)
+  y **filtros** (`JwtAuthFilter`).
+- Al validar, el gateway propaga el usuario autenticado a los microservicios en la
+  cabecera `X-Usuario`.
+
+---
+
+## Monitoreo (Actuator)
+
+Todos los servicios incluyen **Spring Boot Actuator** para verificar su estado.
+
+| Endpoint | Dónde | Para qué |
+|---|---|---|
+| `/actuator/health` | gateway y los 11 microservicios | Comprobar que el servicio está vivo (`{"status":"UP"}`) |
+| `/actuator/gateway/routes` | solo el gateway | Listar en runtime las 11 rutas de enrutamiento |
+
+```bash
+curl http://localhost:8080/actuator/health          # gateway
+curl http://localhost:8001/actuator/health          # cualquier microservicio
+curl http://localhost:8080/actuator/gateway/routes  # rutas activas del gateway
+```
+
+> El endpoint `gateway` se habilita con `management.endpoint.gateway.enabled: true`
+> además de exponerlo en `management.endpoints.web.exposure.include`.
 
 ---
 
@@ -287,6 +383,8 @@ Ya hay una instancia previa corriendo en ese puerto. Reinicia todo con:
 
 ```
 ticketuki/
+├── ms-gateway/     # API Gateway (:8080) — enrutamiento + validación JWT
+├── ms-auth/        # Autenticación (:8011) — emite tokens JWT
 ├── ms-artista/
 ├── ms-estado/
 ├── ms-evento/

@@ -12,8 +12,10 @@
 
     <modules>
         <module>ms-artista</module>
+        <module>ms-auth</module>
         <module>ms-estado</module>
         <module>ms-evento</module>
+        <module>ms-gateway</module>
         <module>ms-historial</module>
         <module>ms-pago</module>
         <module>ms-promocion</module>
