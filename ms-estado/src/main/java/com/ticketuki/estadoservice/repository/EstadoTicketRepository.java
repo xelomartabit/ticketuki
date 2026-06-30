@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface EstadoTicketRepository extends JpaRepository<EstadoTicket, Long> {
 
-    @Query("SELECT e FROM EstadoTicket e WHERE e.nombre_estado_ticket = :nombre")
+    @Query("SELECT e FROM EstadoTicket e WHERE UPPER(e.nombre_estado_ticket) = UPPER(:nombre)")
     Optional<EstadoTicket> findByNombre(@Param("nombre") String nombre);
 }

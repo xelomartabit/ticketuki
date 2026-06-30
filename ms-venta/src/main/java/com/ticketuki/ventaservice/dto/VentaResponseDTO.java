@@ -15,7 +15,7 @@ public class VentaResponseDTO {
     private LocalDateTime fecha_venta;
     private String medio_pago;
     private String cod_autorizacion;
-    private Integer monto_total;
+    private Long monto_total;
     private EstadoVentaDTO estado_venta;
     private List<DetalleVentaResponseDTO> detalles;
 }

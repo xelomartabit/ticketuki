@@ -16,18 +16,35 @@ Ticketuki es una plataforma de venta y gestión de tickets para eventos, constru
 ## Arquitectura
 
 ```
+                          ┌──────────────────────────┐
+        Cliente  ───────► │      ms-gateway :8080     │  ◄── única puerta de entrada
+                          │  (enrutamiento + JWT)     │
+                          └────────────┬─────────────┘
+                                       │ enruta según el path
+        ┌──────────────┬──────────────┼──────────────┬──────────────┐
+        ▼              ▼              ▼              ▼              ▼
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  ms-usuario  │  │  ms-artista  │  │  ms-evento   │  │  ms-recinto  │  │  ms-estado   │
-│   :8001      │  │   :8002      │  │   :8003      │  │   :8008      │  │   :8004      │
+│   ms-auth    │  │  ms-usuario  │  │  ms-artista  │  │  ms-evento   │  │  ms-recinto  │
+│   :8011      │  │   :8001      │  │   :8002      │  │   :8003      │  │   :8008      │
 └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
 
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│  ms-ticket   │  │   ms-venta   │  │   ms-pago    │  │ ms-promocion │  │ ms-historial │
-│   :8005      │  │   :8006      │  │   :8009      │  │   :8007      │  │   :8010      │
+│  ms-estado   │  │  ms-ticket   │  │   ms-venta   │  │   ms-pago    │  │ ms-promocion │
+│   :8004      │  │   :8005      │  │   :8006      │  │   :8009      │  │   :8007      │
 └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘  └──────────────┘
+
+                              ┌──────────────┐
+                              │ ms-historial │
+                              │   :8010      │
+                              └──────────────┘
 ```
 
-Cada microservicio posee su propia base de datos MariaDB aislada, siguiendo el patrón *Database per Service*.
+- **ms-gateway (:8080)** es el *API Gateway*: única puerta de entrada que enruta cada
+  petición al microservicio correcto y valida el token JWT (ver sección *API Gateway y
+  Autenticación*).
+- **ms-auth (:8011)** emite los tokens JWT tras validar las credenciales.
+- Cada microservicio de negocio posee su propia base de datos MariaDB aislada,
+  siguiendo el patrón *Database per Service*.
 
 ---
 
@@ -94,6 +111,14 @@ Registro de auditoría de operaciones realizadas sobre las entidades del sistema
 - Registrar entradas de historial
 - Consultar historial por ID, entidad, usuario y rango de fechas
 
+### ms-auth — Puerto 8011 · BD: `auth_service`
+Servicio de autenticación. Valida credenciales y emite tokens JWT.
+- `POST /auth/login` — recibe `{username, password}` y devuelve un JWT firmado
+
+### ms-gateway — Puerto 8080 · (sin BD)
+API Gateway: única puerta de entrada al sistema. Enruta cada petición al
+microservicio correspondiente y valida el JWT en cada llamada.
+
 ---
 
 ## Tecnologías Utilizadas
@@ -106,6 +131,9 @@ Registro de auditoría de operaciones realizadas sobre las entidades del sistema
 | Base de datos | MariaDB |
 | Migraciones | Flyway |
 | Comunicación inter-servicios | Spring WebFlux (WebClient) |
+| API Gateway | Spring Cloud Gateway |
+| Autenticación | JWT (jjwt) |
+| Monitoreo | Spring Boot Actuator |
 | Validaciones | Jakarta Bean Validation |
 | Build | Maven (Wrapper incluido) |
 
@@ -147,7 +175,33 @@ spring.datasource.password=
 > Las bases de datos se crean automáticamente al levantar cada servicio gracias a `createDatabaseIfNotExist=true`.
 > Los esquemas de tablas y datos iniciales son gestionados automáticamente por **Flyway** al iniciar cada servicio.
 
-### 3. Levantar cada microservicio
+### 3. Levantar los microservicios
+
+#### Opción A — Scripts automáticos (recomendado)
+
+Desde la raíz del proyecto, levanta los 10 servicios en el orden correcto con un solo comando:
+
+```bash
+./start.sh    # levanta los 10 microservicios (8001-8010)
+./stop.sh     # detiene los 10 microservicios
+```
+
+Para **reiniciar** todo (útil si ves el error `Port 8001 was already in use`):
+
+```bash
+./stop.sh && ./start.sh
+```
+
+Características de `start.sh`:
+
+- **Fuerza Java 21** automáticamente (vía `/usr/libexec/java_home -v 21`). Esto evita el error de compilación de Lombok (`TypeTag :: UNKNOWN`) que ocurre si tu `JAVA_HOME` apunta a un JDK más nuevo (24+).
+- **Libera los puertos 8001-8010** si quedaron instancias previas corriendo.
+- **Respeta el orden de dependencias** y espera a que cada servicio quede activo antes de continuar.
+- Guarda la salida de cada servicio en `logs/ms-<nombre>.log`. Para seguir un log en vivo: `tail -f logs/ms-pago.log`.
+
+> Requiere tener un **JDK 21** instalado. Si no se encuentra, el script avisa y se detiene.
+
+#### Opción B — Manual (una terminal por servicio)
 
 Abrir una terminal por servicio y ejecutar desde el directorio raíz del proyecto.
 Se recomienda respetar el orden de inicio para evitar errores de conexión entre servicios:
@@ -198,6 +252,180 @@ cd ms-pago && ./mvnw spring-boot:run
 | ms-recinto | http://localhost:8008/recintos |
 | ms-pago | http://localhost:8009/pagos |
 | ms-historial | http://localhost:8010/historial |
+| ms-auth | http://localhost:8011/auth/login |
+| ms-gateway | http://localhost:8080 |
+
+> A través del gateway, todas las rutas se consumen desde `http://localhost:8080`
+> (ej. `http://localhost:8080/usuarios`). Requieren token JWT salvo `/auth/login`.
+
+---
+
+## API Gateway y Autenticación (JWT)
+
+El sistema expone una **única puerta de entrada** a través del **ms-gateway (:8080)**,
+construido con **Spring Cloud Gateway**. El cliente solo conoce el gateway; éste:
+
+1. **Enruta** cada petición al microservicio correcto según el path (configurado en
+   `ms-gateway/src/main/resources/application.yml`).
+2. **Valida el JWT** en cada petición mediante un filtro global (`JwtAuthFilter`),
+   antes de reenviarla. Todas las rutas requieren un token válido **excepto**
+   `/auth/login`.
+
+### Flujo de uso
+
+```bash
+# 1. Obtener un token (ruta pública). Usuario semilla: hodor / holdthedoor1234
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"hodor","password":"holdthedoor1234"}'
+# → { "token": "eyJhbGciOiJI...", "tipo": "Bearer", "username": "hodor", "expiraEnMs": 3600000 }
+
+# 2. Usar el token en cualquier ruta protegida
+curl http://localhost:8080/ventas \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+| Situación | Respuesta del gateway |
+|---|---|
+| Ruta protegida sin token | `401 Unauthorized` |
+| Ruta protegida con token inválido/expirado | `401 Unauthorized` |
+| Ruta protegida con token válido | Reenvía al microservicio (`200`, etc.) |
+| `POST /auth/login` (pública) | `200` + token JWT |
+
+### Detalles de implementación
+
+- **ms-auth (:8011)** firma los tokens (`JwtUtil` + `signWith(secret)`); el **gateway**
+  los valida con el **mismo `secret`** (variable de entorno `JWT_SECRET`, compartida).
+- El gateway no expone lógica de negocio (no tiene controllers): solo **rutas** (YAML)
+  y **filtros** (`JwtAuthFilter`).
+- Al validar, el gateway propaga el usuario autenticado a los microservicios en la
+  cabecera `X-Usuario`.
+
+---
+
+## Monitoreo (Actuator)
+
+Todos los servicios incluyen **Spring Boot Actuator** para verificar su estado.
+
+| Endpoint | Dónde | Para qué |
+|---|---|---|
+| `/actuator/health` | gateway y los 11 microservicios | Comprobar que el servicio está vivo (`{"status":"UP"}`) |
+| `/actuator/gateway/routes` | solo el gateway | Listar en runtime las 11 rutas de enrutamiento |
+
+```bash
+curl http://localhost:8080/actuator/health          # gateway
+curl http://localhost:8001/actuator/health          # cualquier microservicio
+curl http://localhost:8080/actuator/gateway/routes  # rutas activas del gateway
+```
+
+> El endpoint `gateway` se habilita con `management.endpoint.gateway.enabled: true`
+> además de exponerlo en `management.endpoints.web.exposure.include`.
+
+---
+
+## Pruebas Unitarias
+
+Cada microservicio de negocio incluye pruebas unitarias (JUnit 5 + Mockito + AssertJ),
+sin dependencia de base de datos: todo se *mockea*.
+
+### Cómo ejecutarlas
+
+```bash
+# Todas las pruebas de un microservicio
+cd ms-usuario && mvn test
+
+# Todas las pruebas del proyecto (desde la raíz)
+mvn test
+```
+
+> Requiere **Java 21** (`export JAVA_HOME=$(/usr/libexec/java_home -v 21)`).
+
+### Tipos de prueba
+
+- **Tests de Service** (`*ServiceTest`): prueban la lógica de negocio aislada con
+  `@Mock` (repositorios y clientes HTTP) e `@InjectMocks`. Cubren casos de éxito,
+  errores con validación del mensaje de la excepción (`assertThatThrownBy(...).hasMessage(...)`),
+  filtrados, cálculos y verificación de interacciones (`verify(...)`).
+- **Tests de Controller** (`*ControllerTest`): usan `@WebMvcTest` + `MockMvc` con el
+  service *mockeado* (`@MockBean`). Validan el código HTTP y el cuerpo JSON, tanto en
+  respuestas exitosas (200) como en errores de validación `@Valid` (400, mensaje
+  `"Validación fallida"` del `GlobalExceptionHandler`).
+- **ArgumentCaptor**: en `ms-usuario` y `ms-venta` se captura la entidad enviada a
+  `save(...)` para verificar que el service la **construye correctamente** (p. ej. que
+  el `monto_total` calculado quedó persistido en la entidad `Venta`).
+
+### Cobertura por microservicio
+
+| Microservicio | N° de pruebas |
+|---|---|
+| ms-usuario | 6 |
+| ms-artista | 6 |
+| ms-evento | 5 |
+| ms-ticket | 6 |
+| ms-venta | 7 |
+| ms-promocion | 5 |
+| ms-recinto | 5 |
+| ms-pago | 5 |
+
+> Los microservicios que se comunican con otros (`ms-venta`, `ms-ticket`, `ms-pago`)
+> mockean el cliente HTTP (`EstadoVentaClient`) o se construyen con los `WebClient` en
+> `null` para probar la lógica sin llamadas de red.
+
+---
+
+## Solución de Problemas
+
+### El campo `nombre` de un objeto relacionado llega en `null` (p. ej. `estado_venta`)
+
+Si al crear/consultar una venta (u otra entidad) ves algo como:
+
+```json
+"estado_venta": { "id": 1, "nombre": null }
+```
+
+…significa que el microservicio no pudo consultar por HTTP al servicio dueño del
+dato (ms-estado en este caso) y aplicó su fallback defensivo (devuelve el `id`
+con el `nombre` en `null`). En el log del servicio llamador aparece:
+
+```
+No se pudo consultar ms-estado para id 1: Failed to resolve 'localhost' ...
+```
+
+**Causa (macOS):** el cliente HTTP reactivo (`WebClient` sobre Reactor Netty) usa
+por defecto el **resolver DNS nativo de Netty**, que en macOS no respeta
+`/etc/hosts` y por tanto no resuelve `localhost`.
+
+**Solución aplicada:** los `WebClientConfig` configuran el `HttpClient` para usar
+el **resolver DNS de la JVM** (`DefaultAddressResolverGroup`), que sí respeta
+`/etc/hosts`. Así se mantiene `localhost` en las URLs sin tocar la configuración:
+
+```java
+HttpClient httpClient = HttpClient.create()
+        .resolver(io.netty.resolver.DefaultAddressResolverGroup.INSTANCE);
+
+WebClient.builder()
+        .baseUrl(url)
+        .clientConnector(new ReactorClientHttpConnector(httpClient))
+        .build();
+```
+
+### Error de compilación de Lombok (`TypeTag :: UNKNOWN`)
+
+Ocurre si Maven usa un JDK más nuevo que el soportado por Lombok (p. ej. JDK 24).
+El proyecto requiere **Java 21**. Usa el script `./start.sh` (que fuerza Java 21
+automáticamente) o exporta el JDK correcto antes de compilar:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+```
+
+### `Port 80xx was already in use`
+
+Ya hay una instancia previa corriendo en ese puerto. Reinicia todo con:
+
+```bash
+./stop.sh && ./start.sh
+```
 
 ---
 
@@ -205,6 +433,8 @@ cd ms-pago && ./mvnw spring-boot:run
 
 ```
 ticketuki/
+├── ms-gateway/     # API Gateway (:8080) — enrutamiento + validación JWT
+├── ms-auth/        # Autenticación (:8011) — emite tokens JWT
 ├── ms-artista/
 ├── ms-estado/
 ├── ms-evento/

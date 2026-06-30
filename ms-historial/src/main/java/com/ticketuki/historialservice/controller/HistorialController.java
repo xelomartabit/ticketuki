@@ -39,12 +39,12 @@ public class HistorialController {
 
     @GetMapping("/entidad/{entidad}/{idEntidad}")
     public ResponseEntity<List<HistorialResponseDTO>> obtenerPorEntidad(
-            @PathVariable TipoEntidad entidad, @PathVariable Integer idEntidad) {
+            @PathVariable TipoEntidad entidad, @PathVariable Long idEntidad) {
         return ResponseEntity.ok(historialService.obtenerPorEntidad(entidad, idEntidad));
     }
 
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<HistorialResponseDTO>> obtenerPorUsuario(@PathVariable Integer idUsuario) {
+    public ResponseEntity<List<HistorialResponseDTO>> obtenerPorUsuario(@PathVariable Long idUsuario) {
         return ResponseEntity.ok(historialService.obtenerPorUsuario(idUsuario));
     }
 

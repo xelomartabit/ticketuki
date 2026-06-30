@@ -4,7 +4,7 @@ CREATE TABLE venta (
     medio_pago VARCHAR(10) NOT NULL,
     cod_autorizacion INTEGER NOT NULL,
     estado_venta_id_estado BIGINT,
-    FOREIGN KEY (estado_venta_id_estado) REFERENCES estado_venta(id_estado_venta)
+    INDEX idx_estado (estado_venta_id_estado)
 );
 
 CREATE TABLE detalle_venta (

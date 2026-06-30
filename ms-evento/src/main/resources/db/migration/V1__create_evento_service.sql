@@ -8,6 +8,6 @@ CREATE TABLE evento (
     recinto_id_recinto BIGINT,
 --    INDEX idx_nombre (nombre_evento),
 --    INDEX idx_fecha (fecha_evento),
-    FOREIGN KEY (estado_evento_id_estado) REFERENCES estado_evento(id_estado_evento),
-    FOREIGN KEY (recinto_id_recinto) REFERENCES recinto(id_recinto)
+    INDEX idx_estado (estado_evento_id_estado),
+    INDEX idx_recinto (recinto_id_recinto)
 );

@@ -28,7 +28,7 @@ public class Venta {
     private LocalDateTime fecha_venta;
 
     @NotBlank(message = "El medio de pago es requerido")
-    @Column(name = "medio_pago", nullable = false, length = 10)
+    @Column(name = "medio_pago", nullable = false, length = 50)
     private String medio_pago;
 
     @NotBlank(message = "El código de autorización es requerido")
@@ -38,7 +38,7 @@ public class Venta {
 
     @NotNull(message = "El monto total es requerido")
     @Column(name = "monto_total", nullable = false)
-    private Integer monto_total;
+    private Long monto_total;
 
     @Column(name = "estado_venta_id_estado")
     private Long estado_venta_id_estado;

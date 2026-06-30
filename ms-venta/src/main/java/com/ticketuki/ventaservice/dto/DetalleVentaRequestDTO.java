@@ -17,7 +17,7 @@ public class DetalleVentaRequestDTO {
 
     @NotNull(message = "El precio neto es requerido")
     @Positive(message = "El precio neto debe ser mayor a 0")
-    private Integer precio_neto;
+    private Long precio_neto;
 
     @NotNull(message = "El usuario es requerido")
     private Long usuario_id_usuario;

@@ -24,19 +24,19 @@ public class DetalleVenta {
 
     @NotNull
     @Column(name = "precio_neto", nullable = false)
-    private Integer precio_neto;
+    private Long precio_neto;
 
     @NotNull
     @Column(name = "precio_iva", nullable = false)
-    private Integer precio_iva;
+    private Long precio_iva;
 
     @NotNull
     @Column(name = "precio_total", nullable = false)
-    private Integer precio_total;
+    private Long precio_total;
 
     @NotNull
     @Column(name = "comision", nullable = false)
-    private Integer comision;
+    private Long comision;
 
     @NotNull
     @Column(name = "usuario_id_usuario", nullable = false)
@@ -54,5 +54,5 @@ public class DetalleVenta {
     private Long promocion_id;
 
     @Column(name = "descuento_monto")
-    private Integer descuento_monto;
+    private Long descuento_monto;
 }

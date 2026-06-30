@@ -11,13 +11,13 @@ public class DetalleVentaResponseDTO {
 
     private Long id_detalle;
     private Integer cantidad_ticket;
-    private Integer precio_neto;
-    private Integer precio_iva;
-    private Integer precio_total;
-    private Integer comision;
+    private Long precio_neto;
+    private Long precio_iva;
+    private Long precio_total;
+    private Long comision;
     private Long usuario_id_usuario;
     private Long venta_id_venta;
     private Long sector_id_sector;
     private Long promocion_id;
-    private Integer descuento_monto;
+    private Long descuento_monto;
 }

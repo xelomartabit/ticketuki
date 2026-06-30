@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException ex, HttpServletRequest request) {
         log.warn("Error de estado: {}", ex.getMessage());
         return buildResponse(HttpStatus.valueOf(ex.getStatusCode().value()), ex.getReason(), request, null);
+    }
+
+    @ExceptionHandler(WebClientRequestException.class)
+    public ResponseEntity<ErrorResponse> handleWebClientRequest(WebClientRequestException ex, HttpServletRequest request) {
+        log.error("Error de conexión con microservicio externo: {}", ex.getMessage());
+        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE,
+                "No se pudo conectar con un servicio requerido. Intente nuevamente.", request, null);
     }
 
     @ExceptionHandler(Exception.class)

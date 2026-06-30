@@ -17,7 +17,7 @@ CREATE TABLE recinto (
 
 CREATE TABLE sector (
     id_sector BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre_sector VARCHAR(25) NOT NULL,
+    nombre_sector VARCHAR(50) NOT NULL,
     capacidad_sector INTEGER NOT NULL,
     precio_sector INTEGER NOT NULL,
     recinto_id_recinto BIGINT NOT NULL,

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -60,6 +59,18 @@ public class SectorService {
 
     @Transactional(readOnly = true)
     public List<SectorDTO> listarPorRecinto(Long recintoId) {
-        return sectorRepository.findByRecinto_id_recinto(recintoId).stream().map(this::toResponseDTO).collect(Collectors.toList());
+        return sectorRepository.findByRecinto_id_recinto(recintoId).stream().map(this::toResponseDTO).toList();
+    }
+
+    @Transactional
+    public void eliminarSector(Long id) {
+        log.info("Eliminando sector con ID: {}", id);
+        Sector sector = sectorRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Sector no encontrado para eliminar: {}", id);
+                    return new SectorNotFoundException("Sector no encontrado: " + id);
+                });
+        sectorRepository.delete(sector);
+        log.info("Sector eliminado exitosamente: {}", id);
     }
 }

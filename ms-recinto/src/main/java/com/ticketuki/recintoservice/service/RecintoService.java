@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -90,6 +89,18 @@ public class RecintoService {
         return recintoRepository.findAll()
                 .stream()
                 .map(this::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    @Transactional
+    public void eliminarRecinto(Long id) {
+        log.info("Eliminando recinto con ID: {}", id);
+        Recinto recinto = recintoRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Recinto no encontrado para eliminar: {}", id);
+                    return new RecintoNotFoundException("Recinto no encontrado: " + id);
+                });
+        recintoRepository.delete(recinto);
+        log.info("Recinto eliminado exitosamente: {}", id);
     }
 }

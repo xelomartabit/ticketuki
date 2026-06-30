@@ -7,7 +7,6 @@
       <module fileurl="file://$PROJECT_DIR$/evento-service/evento-service.iml" filepath="$PROJECT_DIR$/evento-service/evento-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/recinto-service/recinto-service.iml" filepath="$PROJECT_DIR$/recinto-service/recinto-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/ticket-service/ticket-service.iml" filepath="$PROJECT_DIR$/ticket-service/ticket-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/ticketuki.iml" filepath="$PROJECT_DIR$/.idea/ticketuki.iml" />
       <module fileurl="file://$PROJECT_DIR$/usuario-service/usuario-service.iml" filepath="$PROJECT_DIR$/usuario-service/usuario-service.iml" />
     </modules>
   </component>

@@ -1,0 +1,86 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ms-gateway
+  cloud:
+    gateway:
+      # Enrutamiento centralizado: cada predicate Path decide a qué microservicio
+      # se reenvía la petición. El cliente solo conoce el gateway (puerto 8080).
+      routes:
+        - id: ms-auth
+          uri: ${MS_AUTH_URL:http://localhost:8011}
+          predicates:
+            - Path=/auth/**
+
+        - id: ms-usuario
+          uri: ${MS_USUARIO_URL:http://localhost:8001}
+          predicates:
+            - Path=/usuarios/**
+
+        - id: ms-artista
+          uri: ${MS_ARTISTA_URL:http://localhost:8002}
+          predicates:
+            - Path=/artistas/**
+
+        - id: ms-evento
+          uri: ${MS_EVENTO_URL:http://localhost:8003}
+          predicates:
+            - Path=/eventos/**
+
+        - id: ms-estado
+          uri: ${MS_ESTADO_URL:http://localhost:8004}
+          predicates:
+            - Path=/estados/**,/estadosEvento/**,/estadosVenta/**,/estadosTicket/**
+
+        - id: ms-ticket
+          uri: ${MS_TICKET_URL:http://localhost:8005}
+          predicates:
+            - Path=/tickets/**
+
+        - id: ms-venta
+          uri: ${MS_VENTA_URL:http://localhost:8006}
+          predicates:
+            - Path=/ventas/**,/detalles/**
+
+        - id: ms-promocion
+          uri: ${MS_PROMOCION_URL:http://localhost:8007}
+          predicates:
+            - Path=/promociones/**
+
+        - id: ms-recinto
+          uri: ${MS_RECINTO_URL:http://localhost:8008}
+          predicates:
+            - Path=/recintos/**,/sectores/**
+
+        - id: ms-pago
+          uri: ${MS_PAGO_URL:http://localhost:8009}
+          predicates:
+            - Path=/pagos/**
+
+        - id: ms-historial
+          uri: ${MS_HISTORIAL_URL:http://localhost:8010}
+          predicates:
+            - Path=/historial/**
+
+# Clave secreta JWT: DEBE coincidir con la del ms-auth (quien firma los tokens).
+jwt:
+  secret: ${JWT_SECRET:ticketuki-jwt-secret-key-muy-larga-y-segura-2024-cambiar}
+
+# Actuator: health checks y visibilidad de las rutas del gateway en runtime.
+# Endpoints: /actuator/health, /actuator/info, /actuator/gateway
+management:
+  endpoint:
+    gateway:
+      enabled: true          # habilita el endpoint /actuator/gateway
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+logging:
+  level:
+    root: INFO
+    com.ticketuki.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO

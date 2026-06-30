@@ -12,11 +12,14 @@ import java.util.List;
 @Repository
 public interface ArtistaEventoRepository extends JpaRepository<Artista_Evento, ArtistaEventoId> {
 
-    List<Artista_Evento> findByEvento_id_evento(Long evento_id_evento);
+    @Query("SELECT ae FROM Artista_Evento ae WHERE ae.evento_id_evento = :evento_id_evento")
+    List<Artista_Evento> findByEvento_id_evento(@Param("evento_id_evento") Long evento_id_evento);
 
-    List<Artista_Evento> findByArtista_id_artista(Long artista_id_artista);
+    @Query("SELECT ae FROM Artista_Evento ae WHERE ae.artista_id_artista = :artista_id_artista")
+    List<Artista_Evento> findByArtista_id_artista(@Param("artista_id_artista") Long artista_id_artista);
 
-    boolean existsByArtista_id_artistaAndEvento_id_evento(Long artista_id_artista, Long evento_id_evento);
+    @Query("SELECT COUNT(ae) > 0 FROM Artista_Evento ae WHERE ae.artista_id_artista = :artista_id_artista AND ae.evento_id_evento = :evento_id_evento")
+    boolean existsByArtista_id_artistaAndEvento_id_evento(@Param("artista_id_artista") Long artista_id_artista, @Param("evento_id_evento") Long evento_id_evento);
 
     @Query("SELECT a FROM Artista a WHERE a.id_artista IN " +
            "(SELECT ae.artista_id_artista FROM Artista_Evento ae WHERE ae.evento_id_evento = :idEvento)")

@@ -49,14 +49,14 @@ public class HistorialService {
     }
 
     @Transactional(readOnly = true)
-    public List<HistorialResponseDTO> obtenerPorEntidad(TipoEntidad entidad, Integer idEntidad) {
+    public List<HistorialResponseDTO> obtenerPorEntidad(TipoEntidad entidad, Long idEntidad) {
         log.info("Consultando historial para entidad: {} id: {}", entidad, idEntidad);
         return historialRepository.findByEntidadAndId_entidad(entidad, idEntidad).stream()
                 .map(this::toResponseDTO).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<HistorialResponseDTO> obtenerPorUsuario(Integer usuarioId) {
+    public List<HistorialResponseDTO> obtenerPorUsuario(Long usuarioId) {
         log.info("Consultando historial del usuario id: {}", usuarioId);
         return historialRepository.findByUsuario_id(usuarioId).stream().map(this::toResponseDTO).toList();
     }
