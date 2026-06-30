@@ -1,0 +1,51 @@
+package com.ticketuki.recintoservice.service;
+
+import com.ticketuki.recintoservice.dto.SectorDTO;
+import com.ticketuki.recintoservice.exception.RecintoNotFoundException;
+import com.ticketuki.recintoservice.exception.SectorNotFoundException;
+import com.ticketuki.recintoservice.repository.RecintoRepository;
+import com.ticketuki.recintoservice.repository.SectorRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class SectorServiceTest {
+
+    @Mock
+    private SectorRepository sectorRepository;
+
+    @Mock
+    private RecintoRepository recintoRepository;
+
+    @InjectMocks
+    private SectorService sectorService;
+
+    // ─────────────3: crear sector con recinto inexistente (error cruzado) ─────────────
+    @Test
+    void crearSector_recintoInexistente_lanzaRecintoNotFound() {
+        SectorDTO dto = new SectorDTO(null, "Platea Baja", 1200, 35000, 7L);
+        when(recintoRepository.existsById(7L)).thenReturn(false);
+
+        assertThatThrownBy(() -> sectorService.crearSector(dto))
+                .isInstanceOf(RecintoNotFoundException.class)
+                .hasMessage("Recinto no encontrado: 7");
+    }
+
+    // ────────────4 obtener sector inexistente (error) ─────────────
+    @Test
+    void obtenerSector_inexistente_lanzaSectorNotFound() {
+        when(sectorRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> sectorService.obtenerSector(99L))
+                .isInstanceOf(SectorNotFoundException.class)
+                .hasMessage("Sector no encontrado: 99");
+    }
+}

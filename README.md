@@ -323,6 +323,56 @@ curl http://localhost:8080/actuator/gateway/routes  # rutas activas del gateway
 
 ---
 
+## Pruebas Unitarias
+
+Cada microservicio de negocio incluye pruebas unitarias (JUnit 5 + Mockito + AssertJ),
+sin dependencia de base de datos: todo se *mockea*.
+
+### Cómo ejecutarlas
+
+```bash
+# Todas las pruebas de un microservicio
+cd ms-usuario && mvn test
+
+# Todas las pruebas del proyecto (desde la raíz)
+mvn test
+```
+
+> Requiere **Java 21** (`export JAVA_HOME=$(/usr/libexec/java_home -v 21)`).
+
+### Tipos de prueba
+
+- **Tests de Service** (`*ServiceTest`): prueban la lógica de negocio aislada con
+  `@Mock` (repositorios y clientes HTTP) e `@InjectMocks`. Cubren casos de éxito,
+  errores con validación del mensaje de la excepción (`assertThatThrownBy(...).hasMessage(...)`),
+  filtrados, cálculos y verificación de interacciones (`verify(...)`).
+- **Tests de Controller** (`*ControllerTest`): usan `@WebMvcTest` + `MockMvc` con el
+  service *mockeado* (`@MockBean`). Validan el código HTTP y el cuerpo JSON, tanto en
+  respuestas exitosas (200) como en errores de validación `@Valid` (400, mensaje
+  `"Validación fallida"` del `GlobalExceptionHandler`).
+- **ArgumentCaptor**: en `ms-usuario` y `ms-venta` se captura la entidad enviada a
+  `save(...)` para verificar que el service la **construye correctamente** (p. ej. que
+  el `monto_total` calculado quedó persistido en la entidad `Venta`).
+
+### Cobertura por microservicio
+
+| Microservicio | N° de pruebas |
+|---|---|
+| ms-usuario | 6 |
+| ms-artista | 6 |
+| ms-evento | 5 |
+| ms-ticket | 6 |
+| ms-venta | 7 |
+| ms-promocion | 5 |
+| ms-recinto | 5 |
+| ms-pago | 5 |
+
+> Los microservicios que se comunican con otros (`ms-venta`, `ms-ticket`, `ms-pago`)
+> mockean el cliente HTTP (`EstadoVentaClient`) o se construyen con los `WebClient` en
+> `null` para probar la lógica sin llamadas de red.
+
+---
+
 ## Solución de Problemas
 
 ### El campo `nombre` de un objeto relacionado llega en `null` (p. ej. `estado_venta`)
