@@ -121,7 +121,7 @@ class UsuarioServiceTest {
 
         assertThatThrownBy(() -> usuarioService.eliminarUsuario(99L))
                 .isInstanceOf(UsuarioNotFoundException.class)
-                .hasMessage("Usuario no encontrado...");
+                .hasMessage("Usuario no encontrado!");
 
         verify(usuarioRepository, never()).deleteById(anyLong());
     }

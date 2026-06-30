@@ -354,7 +354,7 @@ mvn test
   `save(...)` para verificar que el service la **construye correctamente** (p. ej. que
   el `monto_total` calculado quedó persistido en la entidad `Venta`).
 
-### Cobertura por microservicio
+### N° de pruebas por microservicio
 
 | Microservicio | N° de pruebas |
 |---|---|

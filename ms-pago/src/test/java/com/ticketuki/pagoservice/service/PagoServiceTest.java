@@ -59,7 +59,7 @@ class PagoServiceTest {
 
         assertThatThrownBy(() -> pagoService.completarPago(1L))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Solo se puede completar un pago en estado PENDIENTE...");
+                .hasMessageContaining("Solo se puede completar un pago en estado PENDIENTE");
     }
 
     // ───────3 reembolso no permitido (no COMPLETADO) - IllegalState───────
@@ -69,7 +69,7 @@ class PagoServiceTest {
 
         assertThatThrownBy(() -> pagoService.procesarReembolso(1L))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("solo se puede reembolsar un pago en estado COMPLETADO...");
+                .hasMessageContaining("Solo se puede reembolsar un pago en estado COMPLETADO");
     }
 
     // ─────── 4 listar por periodo con fechas invertidas - IllegalArgument───────
@@ -80,6 +80,6 @@ class PagoServiceTest {
 
         assertThatThrownBy(() -> pagoService.listarPorPeriodo(desde, hasta))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("La fecha 'desde' no puede ser posterior a 'hasta'...");
+                .hasMessage("La fecha 'desde' no puede ser posterior a 'hasta'");
     }
 }

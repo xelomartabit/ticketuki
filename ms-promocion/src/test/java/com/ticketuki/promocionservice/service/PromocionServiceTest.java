@@ -66,7 +66,7 @@ class PromocionServiceTest {
 
         assertThatThrownBy(() -> promocionService.crearPromocion(req))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("La fecha de inicio no puede ser posterior a la fecha de expiracion...");
+                .hasMessage("La fecha de inicio no puede ser posterior a la fecha de expiración");
     }
 
     // ────────────3: obtener inexistente (error) ─────────────
@@ -76,7 +76,7 @@ class PromocionServiceTest {
 
         assertThatThrownBy(() -> promocionService.obtenerPromocion(99L))
                 .isInstanceOf(PromocionNotFoundException.class)
-                .hasMessage("Promocion no encontrada: 99");
+                .hasMessage("Promoción no encontrada: 99");
     }
 
     // ───────────4: listar activas (filtrado) ─────────────
